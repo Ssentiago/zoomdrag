@@ -1,3 +1,6 @@
+## [6.3.1] - 2026-10-11
+Rebrand plugin from Image Zoom & Drag to Zoomdrag
+
 # 6.3.0
 ## Features
 - Add path exclusions: specify patterns to exclude certain files or folders from being processed by the plugin
