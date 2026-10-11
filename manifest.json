@@ -1,6 +1,6 @@
 {
   "id": "diagram-zoom-drag",
-  "name": "Image Zoom & Drag",
+  "name": "Zoomdrag",
   "version": "6.3.0",
   "minAppVersion": "0.9.12",
   "description": "Make any image or diagram interactive with zoom, drag, and control panels",

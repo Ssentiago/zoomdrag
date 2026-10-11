@@ -1,12 +1,12 @@
-# Contributing to Image Zoom & Drag
+# Contributing to Zoomdrag
 
-We welcome contributions to make Image Zoom & Drag better! Here are the ways you can help:
+We welcome contributions to make Zoomdrag better! Here are the ways you can help:
 
 ## 🌍 Translations
 
-**Help translate Image Zoom & Drag into your language!**
+**Help translate Zoomdrag into your language!**
 
-We're looking for contributors to translate the plugin interface into different languages. This makes Image Zoom & Drag accessible to users worldwide.
+We're looking for contributors to translate the plugin interface into different languages. This makes Zoomdrag accessible to users worldwide.
 
 **Quick start:**
 - See our complete [Translation Guide](TRANSLATION_GUIDE.md) for detailed instructions
@@ -45,4 +45,4 @@ We're looking for contributors to translate the plugin interface into different 
 
 - Check the [Translation Guide](TRANSLATION_GUIDE.md) for translation questions
 
-Thank you for helping make Image Zoom & Drag better for everyone! 🎉
+Thank you for helping make Zoomdrag better for everyone! 🎉

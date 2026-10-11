@@ -16,7 +16,7 @@ export default class Help extends Component {
     onload(): void {
         if (this.plugin.userState.isFirstLaunch) {
             this.plugin.showInteractiveNotice(
-                'New to Image Zoom & Drag? Click here for quick start guide (auto-hide in 1 min)',
+                'New to Zoomdrag? Click here for quick start guide (auto-hide in 1 min)',
                 () => {
                     this.showModal('full');
                 },

@@ -77,7 +77,7 @@ export default class Settings extends Component {
         const pluginPath = this.plugin.manifest.dir;
 
         if (!pluginPath) {
-            throw new Error('Image Zoom & Drag: `No plugin dir found`');
+            throw new Error('Zoomdrag: `No plugin dir found`');
         }
 
         const configPath = normalizePath(`${pluginPath}/data.json`);

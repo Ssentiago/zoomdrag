@@ -43,7 +43,7 @@ export default class Logger {
 
             await this.rotateLogFiles(this.logsDir);
         } catch (error) {
-            console.error('Image Zoom & Drag: Error in the file:', error);
+            console.error('Zoomdrag: Error in the file:', error);
         }
     }
 
@@ -51,7 +51,7 @@ export default class Logger {
         const pluginDir = this.plugin.manifest.dir;
         if (pluginDir === undefined) {
             throw new Error(
-                `Image Zoom & Drag: It was not possible to get the way to the plugin. Path:${pluginDir}`
+                `Zoomdrag: It was not possible to get the way to the plugin. Path:${pluginDir}`
             );
         }
         this.logsDir = normalizePath(`${pluginDir}/logs`);
@@ -83,12 +83,12 @@ export default class Logger {
                 if (stat && now - stat.mtime > maxAge) {
                     await this.plugin.app.vault.adapter.remove(filePath);
                     console.log(
-                        `Image Zoom & Drag: Remove the old log-file${file}`
+                        `Zoomdrag: Remove the old log-file${file}`
                     );
                 }
             }
         } catch (error) {
-            console.error('Image Zoom & Drag: Log Rotation Error:', error);
+            console.error('Zoomdrag: Log Rotation Error:', error);
         }
     }
 
@@ -235,7 +235,7 @@ export default class Logger {
             localStorage.removeItem('test');
         } catch {
             this.isStorageAvailable = false;
-            console.warn('Image Zoom & Drag: Localstorage is not available');
+            console.warn('Zoomdrag: Localstorage is not available');
         }
     }
 

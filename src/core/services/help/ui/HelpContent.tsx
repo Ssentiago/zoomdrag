@@ -130,7 +130,7 @@ const HelpContent: FC<HelpContentProps> = ({
     return (
         <OModal
             onClose={onClose}
-            title={'Image Zoom & Drag Help'}
+            title={'Zoomdrag Help'}
             height={'100%'}
             width={'100%'}
         >
@@ -246,7 +246,7 @@ const HelpContent: FC<HelpContentProps> = ({
                                 </p>
                                 <p>
                                     To enable for regular images: Obsidian
-                                    Settings → Plugins → Image Zoom & Drag
+                                    Settings → Plugins → Zoomdrag
                                     Settings → Images → Presets → IMG_SVG.
                                 </p>
                                 <p>
