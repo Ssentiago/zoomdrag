@@ -7,7 +7,7 @@
   "main": "src/main.ts",
   "repository": "https://github.com/Ssentiago/image-zoom-drag.git",
   "type": "module",
-  "version": "6.3.0",
+  "version": "6.3.1",
   "scripts": {
     "dev": "NODE_ENV=development rollup -c rollup.config.ts --configPlugin esbuild -w",
     "build": "cross-env NODE_ENV=production rollup -c rollup.config.ts --configPlugin esbuild",
