@@ -15,6 +15,7 @@
     "release": "obsidian-dev-tools release",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json}\"",
     "locale:nest": "i18n-tools nest",
+    "tsc": "tsc --noEmit",
     "locale:template": "i18n-tools template",
     "locale:check-locale": "i18n-tools check-locale",
     "locale:check-locales": "i18n-tools check-locales",
