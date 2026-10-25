@@ -91,7 +91,7 @@ const baseConfig = {
 const developmentConfig = {
     ...baseConfig,
     output: {
-        dir: 'test-vault/.obsidian/plugins/image-zoom-drag',
+        dir: 'test-vault/.obsidian/plugins/diagram-zoom-drag',
         sourcemap: false,
         format: 'cjs',
         exports: 'auto',
@@ -103,15 +103,15 @@ const developmentConfig = {
             targets: [
                 {
                     src: './styles.css',
-                    dest: 'test-vault/.obsidian/plugins/image-zoom-drag/',
+                    dest: 'test-vault/.obsidian/plugins/diagram-zoom-drag/',
                 },
                 {
                     src: './manifest.json',
-                    dest: 'test-vault/.obsidian/plugins/image-zoom-drag/',
+                    dest: 'test-vault/.obsidian/plugins/diagram-zoom-drag/',
                 },
                 {
                     src: './.hotreload',
-                    dest: 'test-vault/.obsidian/plugins/image-zoom-drag/',
+                    dest: 'test-vault/.obsidian/plugins/diagram-zoom-drag/',
                 },
             ],
         }),
