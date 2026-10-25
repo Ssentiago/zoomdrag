@@ -3,18 +3,7 @@ import ImageViewer from '@/modes/popup-mode/ui/popup/popup-content/content/Image
 
 import React, { FC, useEffect, useRef, useState } from 'react';
 
-import styled, { keyframes } from 'styled-components';
-
-const fadeIn = keyframes`
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-`;
+import styled from 'styled-components';
 
 const DraggableWrapper = styled.div<{
     isDragging: boolean;
@@ -99,8 +88,6 @@ const Content: FC = () => {
         const container = containerRef.current;
         const image = images[activeImageIndex];
 
-        if (!image) return 1;
-
         const containerWidth = container.clientWidth;
         const containerHeight = container.clientHeight;
 
@@ -132,7 +119,7 @@ const Content: FC = () => {
         setPosition({ x: 0, y: 0 });
         setDragStart({ x: 0, y: 0 });
 
-        setTimeout(() => {
+        window.setTimeout(() => {
             const initialScale = calculateInitialScale();
             setScale(initialScale);
         }, 50);
@@ -188,7 +175,7 @@ const Content: FC = () => {
                 document.removeEventListener('mouseup', handleMouseUp);
             };
         }
-        return () => {};
+        return undefined;
     }, [isDragging, dragStart]);
 
     return (

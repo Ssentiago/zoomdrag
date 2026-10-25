@@ -55,7 +55,7 @@ const IntegratedSection = styled.div`
     min-width: 0;
 `;
 
-interface HelpContentProps extends HelpRootProps {}
+type HelpContentProps = HelpRootProps;
 
 const testMermaidContent = `
 \`\`\`mermaid
@@ -101,7 +101,7 @@ const renderMermaid = async (
         const ctx = getBaseContext(svg);
         help.plugin.emitter.emit('create-integrated-element-outside-view', ctx);
     }
-    await new Promise((resolve) => requestAnimationFrame(resolve));
+    await new Promise((resolve) => window.requestAnimationFrame(resolve));
 };
 
 const HelpContent: FC<HelpContentProps> = ({
@@ -115,7 +115,7 @@ const HelpContent: FC<HelpContentProps> = ({
     useEffect(() => {
         let component: Component | null = null;
 
-        (async () => {
+        void (async () => {
             if (!diagramSectionRef.current) return;
 
             component = new Component();

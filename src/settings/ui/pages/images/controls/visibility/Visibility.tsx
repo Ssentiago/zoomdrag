@@ -50,14 +50,17 @@ const Visibility: React.FC = () => {
             >
                 <select
                     value={plugin.settings.$.panels.global.triggering.mode}
-                    onChange={async (e) => {
-                        const value = e.target.value as PanelsTriggering;
-                        plugin.settings.$.panels.global.triggering.mode = value;
-                        setServiceOptionVisible(
-                            value !== PanelsTriggering.ALWAYS
-                        );
-                        extractTooltipDependsOnOption(e.target);
-                        await plugin.settings.save();
+                    onChange={(e) => {
+                        void (async () => {
+                            const value = e.target.value as PanelsTriggering;
+                            plugin.settings.$.panels.global.triggering.mode =
+                                value;
+                            setServiceOptionVisible(
+                                value !== PanelsTriggering.ALWAYS
+                            );
+                            extractTooltipDependsOnOption(e.target);
+                            await plugin.settings.save();
+                        })();
                     }}
                 >
                     <option value='always'>
@@ -96,10 +99,12 @@ const Visibility: React.FC = () => {
                             plugin.settings.$.panels.global.triggering
                                 .ignoreService
                         }
-                        onChange={async (e) => {
-                            plugin.settings.$.panels.global.triggering.ignoreService =
-                                e.target.checked;
-                            await plugin.settings.save();
+                        onChange={(e) => {
+                            void (async () => {
+                                plugin.settings.$.panels.global.triggering.ignoreService =
+                                    e.target.checked;
+                                await plugin.settings.save();
+                            })();
                         }}
                     />
                 </OSetting>

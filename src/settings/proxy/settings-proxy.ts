@@ -2,11 +2,11 @@ import Settings from '../settings';
 
 export function createSettingsProxy(
     settingsManager: Settings,
-    obj: any,
-    path: any[] = []
-): any {
+    obj: unknown,
+    path: unknown[] = []
+): unknown {
     return new Proxy(obj, {
-        get(target, key) {
+        get(target: Record<string, unknown>, key) {
             if (key === 'toJSON') {
                 return () => target;
             }
@@ -20,11 +20,11 @@ export function createSettingsProxy(
             }
             return value;
         },
-        set(target, prop, value) {
+        set(target: Record<string, unknown>, prop, value: unknown) {
             const oldValue = target[prop];
             target[prop] = value;
             const fullPath = [...path, prop].join('.');
-            settingsManager.emitter?.emit(`settings.${fullPath}`, {
+            settingsManager.emitter.emit(`settings.${fullPath}`, {
                 eventName: `settings.${fullPath}`,
                 oldValue,
                 newValue: value,
@@ -33,14 +33,14 @@ export function createSettingsProxy(
             return true;
         },
 
-        deleteProperty(target, prop) {
+        deleteProperty(target: Record<string, unknown>, prop) {
             const oldValue = target[prop];
             const existed = prop in target;
             delete target[prop];
 
             if (existed) {
                 const fullPath = [...path, prop].join('.');
-                settingsManager.emitter?.emit(`settings.${fullPath}`, {
+                settingsManager.emitter.emit(`settings.${fullPath}`, {
                     eventName: `settings.${fullPath}`,
                     operation: 'delete',
                     oldValue,

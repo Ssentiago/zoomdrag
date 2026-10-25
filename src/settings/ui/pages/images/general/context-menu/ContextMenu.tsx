@@ -22,10 +22,12 @@ const ContextMenu: FC = () => {
                     defaultChecked={
                         plugin.settings.$.units.contextMenu.showForDiagrams
                     }
-                    onChange={async (e) => {
-                        plugin.settings.$.units.contextMenu.showForDiagrams =
-                            e.target.checked;
-                        await plugin.settings.save();
+                    onChange={(e) => {
+                        void (async () => {
+                            plugin.settings.$.units.contextMenu.showForDiagrams =
+                                e.target.checked;
+                            await plugin.settings.save();
+                        })();
                     }}
                 />
             </OSetting>
@@ -39,10 +41,12 @@ const ContextMenu: FC = () => {
                     defaultChecked={
                         plugin.settings.$.units.contextMenu.showForOtherImages
                     }
-                    onChange={async (e) => {
-                        plugin.settings.$.units.contextMenu.showForOtherImages =
-                            e.target.checked;
-                        await plugin.settings.save();
+                    onChange={(e) => {
+                        void (async () => {
+                            plugin.settings.$.units.contextMenu.showForOtherImages =
+                                e.target.checked;
+                            await plugin.settings.save();
+                        })();
                     }}
                 />
             </OSetting>

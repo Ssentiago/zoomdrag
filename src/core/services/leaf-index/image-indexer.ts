@@ -5,7 +5,7 @@ import {
 } from '@/modes/integrated-mode/integrated-unit/types/interfaces';
 import { isThisSvgIcon } from '@/utils/dom-utils';
 
-import { MarkdownPostProcessorContext, MarkdownView } from 'obsidian';
+import { MarkdownPostProcessorContext } from 'obsidian';
 
 import { BaseUnitContext } from '../types/interfaces';
 import LeafIndex from './leaf-index';
@@ -47,7 +47,7 @@ export default class ImageIndexer {
             const imageType = this.getImageOrigin(image, sourceData);
 
             const imageData: BaseUnitContext = {
-                sourceData: sourceData,
+                sourceData,
                 element: image,
                 origin: imageType,
                 elementType: image instanceof HTMLImageElement ? 'img' : 'svg',
@@ -75,7 +75,7 @@ export default class ImageIndexer {
                     const imageType = this.getImageOrigin(image, sourceData);
 
                     const imageData: BaseUnitContext = {
-                        sourceData: sourceData,
+                        sourceData,
                         element: image,
                         origin: imageType,
                         elementType:
@@ -92,7 +92,7 @@ export default class ImageIndexer {
 
         observer.observe(el, { childList: true, subtree: true });
 
-        setTimeout(() => {
+        window.setTimeout(() => {
             observer.disconnect();
         }, 5000);
     }
@@ -102,7 +102,7 @@ export default class ImageIndexer {
 
         this.mutationObserver = new MutationObserver((mutations) => {
             for (const mutation of this.filteredMutations(mutations)) {
-                if (!(mutation.target instanceof Element)) {
+                if (!(mutation.target.instanceOf(Element))) {
                     continue;
                 }
                 const isLivePreview = !!mutation.target.closest(
@@ -120,7 +120,7 @@ export default class ImageIndexer {
 
                     const imageData = {
                         origin: imageType,
-                        sourceData: sourceData,
+                        sourceData,
                         element: image,
                         elementType:
                             image instanceof HTMLImageElement ? 'img' : 'svg',
@@ -169,7 +169,7 @@ export default class ImageIndexer {
         nodes: NodeList
     ): Generator<HTMLImageElement | SVGElement, void, unknown> {
         for (const node of Array.from(nodes)) {
-            if (!(node instanceof Element)) continue;
+            if (!(node.instanceOf(Element))) continue;
 
             const image =
                 (node.matches('svg,img') && node) ||
@@ -214,9 +214,9 @@ export default class ImageIndexer {
         const source = lines.slice(lineStart, lineEnd + 1).join('\n');
 
         return {
-            source: source,
-            lineStart: lineStart,
-            lineEnd: lineEnd,
+            source,
+            lineStart,
+            lineEnd,
         };
     }
 
@@ -225,9 +225,7 @@ export default class ImageIndexer {
         lineStart: number;
         lineEnd: number;
     } {
-        const parent = this.findElementWithLivePreviewWidget(element) as
-            | HTMLElementWithCMView
-            | undefined;
+        const parent = this.findElementWithLivePreviewWidget(element);
 
         const widget = parent?.cmView?.deco?.widget;
 
@@ -266,7 +264,9 @@ export default class ImageIndexer {
             'code' in widget &&
             'lineStart' in widget &&
             'lineEnd' in widget &&
-            'lang' in widget
+            'lang' in widget &&
+            typeof widget.lang === 'string' &&
+            typeof widget.code === 'string'
         ) {
             return {
                 source: `\`\`\`${widget.lang}\n${widget.code}\n\`\`\``,
@@ -287,10 +287,10 @@ export default class ImageIndexer {
         let current = el as HTMLElement | null | undefined;
 
         while (current && current !== document.body) {
-            if ((current as HTMLElementWithCMView)?.cmView) {
-                return current as HTMLElementWithCMView;
+            if ((current as HTMLElementWithCMView).cmView) {
+                return current;
             }
-            current = current?.parentElement;
+            current = current.parentElement;
         }
         return undefined;
     }

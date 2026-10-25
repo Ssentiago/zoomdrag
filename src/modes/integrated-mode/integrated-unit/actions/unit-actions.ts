@@ -120,7 +120,7 @@ export class UnitActions {
             await document.exitFullscreen();
         }
 
-        requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
             this.resetZoomAndMove();
         });
     }

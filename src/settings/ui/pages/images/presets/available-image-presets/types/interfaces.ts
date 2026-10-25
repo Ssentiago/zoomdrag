@@ -5,7 +5,7 @@ export interface ModeState {
     mode: mode;
     index: number;
     data?: {
-        [key: string]: any;
+        [key: string]: unknown;
     };
 }
 

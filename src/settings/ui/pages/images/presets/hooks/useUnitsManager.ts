@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 
+import { UseUnitsManagerReturn } from './types/interfaces';
 import { ImageConfig } from '../../../../../types/interfaces';
 import { useSettingsContext } from '../../../../core/SettingsContext';
 
-export const useUnitsManager = () => {
+export const useUnitsManager = (): UseUnitsManagerReturn => {
     const { plugin } = useSettingsContext();
     const [units, setUnits] = useState(plugin.settings.$.units.configs);
 

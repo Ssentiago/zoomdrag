@@ -165,6 +165,6 @@ export interface MigrationResult {
 
 export interface SettingsEventPayload {
     eventName: string;
-    oldValue: any;
-    newValue: any;
+    oldValue: unknown;
+    newValue: unknown;
 }

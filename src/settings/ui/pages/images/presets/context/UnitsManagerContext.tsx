@@ -3,7 +3,7 @@ import {
     UnitsManagerProviderProps,
 } from '@/settings/ui/pages/images/presets/context/types/interfaces';
 
-import { createContext, useContext, useMemo } from 'react';
+import React, { createContext, useContext, useMemo } from 'react';
 
 import { useUnitsManager } from '../hooks/useUnitsManager';
 
@@ -13,7 +13,7 @@ const UnitsManagerContext = createContext<UnitManagerContextProps | undefined>(
 
 export const UnitsManagerProvider = ({
     children,
-}: UnitsManagerProviderProps) => {
+}: UnitsManagerProviderProps): React.ReactElement => {
     const { units, saveUnits } = useUnitsManager();
 
     const contextValue = useMemo(

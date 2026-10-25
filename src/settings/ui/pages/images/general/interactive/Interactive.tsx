@@ -29,10 +29,12 @@ const Interactive: FC = () => {
                     defaultChecked={
                         plugin.settings.$.units.interactivity.picker.enabled
                     }
-                    onChange={async (e) => {
-                        plugin.settings.$.units.interactivity.picker.enabled =
-                            e.target.checked;
-                        await plugin.settings.save();
+                    onChange={(e) => {
+                        void (async () => {
+                            plugin.settings.$.units.interactivity.picker.enabled =
+                                e.target.checked;
+                            await plugin.settings.save();
+                        })();
                     }}
                 />
             </OSetting>
@@ -51,11 +53,13 @@ const Interactive: FC = () => {
                         plugin.settings.$.units.interactivity.markdown
                             .autoDetect
                     }
-                    onChange={async (e) => {
-                        const value = e.target.checked;
-                        plugin.settings.$.units.interactivity.markdown.autoDetect =
-                            value;
-                        await plugin.settings.save();
+                    onChange={(e) => {
+                        void (async () => {
+                            const value = e.target.checked;
+                            plugin.settings.$.units.interactivity.markdown.autoDetect =
+                                value;
+                            await plugin.settings.save();
+                        })();
                     }}
                 />
             </OSetting>

@@ -16,7 +16,7 @@ export default class Info extends Component {
     showInfo(): void {
         const info = this.info;
 
-        this.modalDiv ??= document.createElement('div');
+        this.modalDiv ??= createDiv();
         document.body.appendChild(this.modalDiv);
 
         if (!this.reactRoot) {
@@ -30,7 +30,7 @@ export default class Info extends Component {
         }
     }
 
-    closeModal = () => {
+    closeModal = (): void => {
         this.reactRoot?.unmount();
         this.reactRoot = undefined;
         this.modalDiv?.remove();

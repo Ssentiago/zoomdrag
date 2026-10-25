@@ -4,8 +4,7 @@ import { OModal, OSetting } from '@obsidian-lib/native-react-components';
 
 import { UnitInfoProps } from './types/interfaces';
 
-const InfoModal: FC<UnitInfoProps> = ({ info, onClose }) => {
-    return (
+const InfoModal: FC<UnitInfoProps> = ({ info, onClose }) => (
         <OModal
             title='Image properties'
             onClose={onClose}
@@ -94,6 +93,5 @@ const InfoModal: FC<UnitInfoProps> = ({ info, onClose }) => {
             )}
         </OModal>
     );
-};
 
 export default InfoModal;

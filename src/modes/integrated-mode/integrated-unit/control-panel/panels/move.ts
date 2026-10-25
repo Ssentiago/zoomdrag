@@ -16,15 +16,15 @@ export class MovePanel extends BasePanel<MoveButtons> {
     get enabled(): boolean {
         return (
             this.unit.plugin.settings.$.panels.local.panels.move.on &&
-            this.unit.context.options.panels.move?.on
+            this.unit.context.options.panels.move.on
         );
     }
 
-    get cssClass() {
+    get cssClass(): string {
         return 'izd-move-panel';
     }
 
-    get cssStyles() {
+    get cssStyles(): object {
         return {
             ...this.unit.plugin.settings.$.panels.local.panels.move.position,
             gridTemplateColumns: 'repeat(3, 1fr)',

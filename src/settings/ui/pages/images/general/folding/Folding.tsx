@@ -23,10 +23,12 @@ const Folding: FC = (): React.ReactElement => {
                     defaultChecked={
                         plugin.settings.$.units.folding.foldByDefault
                     }
-                    onChange={async (e) => {
-                        plugin.settings.$.units.folding.foldByDefault =
-                            e.target.checked;
-                        await plugin.settings.save();
+                    onChange={(e) => {
+                        void (async () => {
+                            plugin.settings.$.units.folding.foldByDefault =
+                                e.target.checked;
+                            await plugin.settings.save();
+                        })();
                     }}
                 />
             </OSetting>
@@ -42,10 +44,12 @@ const Folding: FC = (): React.ReactElement => {
                     defaultChecked={
                         plugin.settings.$.units.folding.autoFoldOnFocusChange
                     }
-                    onChange={async (e) => {
-                        plugin.settings.$.units.folding.autoFoldOnFocusChange =
-                            e.target.checked;
-                        await plugin.settings.save();
+                    onChange={(e) => {
+                        void (async () => {
+                            plugin.settings.$.units.folding.autoFoldOnFocusChange =
+                                e.target.checked;
+                            await plugin.settings.save();
+                        })();
                     }}
                 />
             </OSetting>

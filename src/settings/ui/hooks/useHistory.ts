@@ -1,6 +1,6 @@
 import { t, tf } from '@/lang';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useSettingsContext } from '../core/SettingsContext';
 import { HistoryAction, UndoRedoApi } from './types/interfaces';
@@ -17,19 +17,18 @@ export const useHistory = <T extends readonly unknown[]>(
     const [undoDescription, setUndoDescription] = useState('');
     const [redoDescription, setRedoDescription] = useState('');
 
-    if (process.env.NODE_ENV === 'development') {
-        useEffect(() => {
-            (window as any).undoDebug = {
-                undoStack,
-                redoStack,
-                undoDescription,
-                redoDescription,
-                canUndo: undoStack.length > 0,
-                canRedo: redoStack.length > 0,
-                currentState: state,
-            };
-        }, [undoStack, redoStack, undoDescription, redoDescription, state]);
-    }
+    useEffect(() => {
+        if (process.env.NODE_ENV !== 'development') return;
+        (window as unknown).undoDebug = {
+            undoStack,
+            redoStack,
+            undoDescription,
+            redoDescription,
+            canUndo: undoStack.length > 0,
+            canRedo: redoStack.length > 0,
+            currentState: state,
+        };
+    }, [undoStack, redoStack, undoDescription, redoDescription, state]);
 
     useEffect(() => {
         if (undoStack.length > 0) {
@@ -80,7 +79,7 @@ export const useHistory = <T extends readonly unknown[]>(
     };
 
     useEffect(() => {
-        const handler = async () => {
+        const handler = () => {
             setUndoStack([]);
             setRedoStack([]);
             setCanUndo(false);
@@ -98,8 +97,8 @@ export const useHistory = <T extends readonly unknown[]>(
     const updateUndoStack = (state: T, description: string) => {
         let newUndoStack = [...undoStack];
         newUndoStack.push({
-            description: description,
-            state: state,
+            description,
+            state,
         });
         setCanUndo(true);
         if (newUndoStack.length > 50) {
@@ -161,37 +160,39 @@ export const useHistory = <T extends readonly unknown[]>(
     };
 
     useEffect(() => {
-        const handler = async (e: KeyboardEvent) => {
-            if (e.code !== 'KeyZ' && e.code !== 'KeyY') {
-                return;
-            }
+        const handler = (e: KeyboardEvent) => {
+            void (async () => {
+                if (e.code !== 'KeyZ' && e.code !== 'KeyY') {
+                    return;
+                }
 
-            if ((e.ctrlKey || e.metaKey) && e.shiftKey) {
-                e.preventDefault();
-                if (canRedo) {
+                if ((e.ctrlKey || e.metaKey) && e.shiftKey) {
+                    e.preventDefault();
+                    if (canRedo) {
+                        await redo();
+                    } else {
+                        plugin.showNotice(
+                            t.settings.pages.images.presets.history.notices
+                                .nothingToRedo
+                        );
+                    }
+                } else if (e.ctrlKey || e.metaKey) {
+                    e.preventDefault();
+                    if (canUndo) {
+                        await undo();
+                    } else {
+                        plugin.showNotice(
+                            t.settings.pages.images.presets.history.notices
+                                .nothingToUndo
+                        );
+                    }
+                }
+
+                if (e.code === 'KeyY' && (e.ctrlKey || e.metaKey) && !e.shiftKey) {
+                    e.preventDefault();
                     await redo();
-                } else {
-                    plugin.showNotice(
-                        t.settings.pages.images.presets.history.notices
-                            .nothingToRedo
-                    );
                 }
-            } else if (e.ctrlKey || e.metaKey) {
-                e.preventDefault();
-                if (canUndo) {
-                    await undo();
-                } else {
-                    plugin.showNotice(
-                        t.settings.pages.images.presets.history.notices
-                            .nothingToUndo
-                    );
-                }
-            }
-
-            if (e.code === 'KeyY' && (e.ctrlKey || e.metaKey) && !e.shiftKey) {
-                e.preventDefault();
-                await redo();
-            }
+            })();
         };
         window.addEventListener('keydown', handler, true);
         return () => {

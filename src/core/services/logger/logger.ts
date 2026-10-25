@@ -1,9 +1,23 @@
 import IzdPlugin from '@/core/izd-plugin';
 import { ShortSystemInfo, SystemInfo } from '@/core/services/types/interfaces';
+import { DebugLevel } from '@/settings/types/interfaces';
 
 import { normalizePath, Platform } from 'obsidian';
 
 import { moment } from '@/utils/moment';
+
+interface LogEntry {
+    timestamp: string;
+    level: string;
+    message: string;
+    context?: Record<string, unknown> & {
+        file?: string;
+        lineNumber?: number;
+        columnNumber?: number;
+        functionName?: string;
+    };
+    session_start?: boolean;
+}
 
 export default class Logger {
     private readonly maxEntries = 2000;
@@ -136,10 +150,16 @@ export default class Logger {
                 viewport_size: `${window.innerWidth}x${window.innerHeight}`,
                 timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
                 online_status: navigator.onLine,
-                cpu_cores: navigator.hardwareConcurrency || 'unknown',
-                device_memory: (navigator as any).deviceMemory || 'unknown',
+                cpu_cores: navigator.hardwareConcurrency,
+                device_memory:
+                    (navigator as unknown as { deviceMemory?: number })
+                        .deviceMemory ?? 'unknown',
                 connection_type:
-                    (navigator as any).connection?.effectiveType || 'unknown',
+                    (
+                        navigator as unknown as {
+                            connection?: { effectiveType?: string };
+                        }
+                    ).connection?.effectiveType ?? 'unknown',
             },
             plugin: {
                 name: this.plugin.manifest.name,
@@ -151,11 +171,23 @@ export default class Logger {
             },
             performance: {
                 memory_used:
-                    (performance as any).memory?.usedJSHeapSize || 'unknown',
+                    (
+                        performance as unknown as {
+                            memory?: { usedJSHeapSize?: number };
+                        }
+                    ).memory?.usedJSHeapSize ?? 'unknown',
                 memory_total:
-                    (performance as any).memory?.totalJSHeapSize || 'unknown',
+                    (
+                        performance as unknown as {
+                            memory?: { totalJSHeapSize?: number };
+                        }
+                    ).memory?.totalJSHeapSize ?? 'unknown',
                 memory_limit:
-                    (performance as any).memory?.jsHeapSizeLimit || 'unknown',
+                    (
+                        performance as unknown as {
+                            memory?: { jsHeapSizeLimit?: number };
+                        }
+                    ).memory?.jsHeapSizeLimit ?? 'unknown',
                 load_time: performance.now(),
             },
             storage: {
@@ -195,11 +227,15 @@ export default class Logger {
      */
     private getPlatformInfo(): string {
         if ('userAgentData' in navigator) {
-            const uaData = (navigator as any).userAgentData;
-            return uaData.platform ?? 'unknown';
+            const uaData = (
+                navigator as unknown as {
+                    userAgentData?: { platform?: string };
+                }
+            ).userAgentData;
+            return uaData?.platform ?? 'unknown';
         }
 
-        return navigator.platform ?? 'unknown';
+        return navigator.platform;
     }
 
     /**
@@ -248,7 +284,7 @@ export default class Logger {
      *
      * @param {any} logEntry The log entry to add.
      */
-    private addLogEntry(logEntry: any): void {
+    private addLogEntry(logEntry: LogEntry): void {
         if (!this.isStorageAvailable) {
             return;
         }
@@ -280,9 +316,9 @@ export default class Logger {
      *
      * @returns {any[]} An array of log objects, or an empty array if no logs are available.
      */
-    getAllLogs(): any[] {
+    getAllLogs(): LogEntry[] {
         const stored = localStorage.getItem(this.storageKey);
-        return stored ? JSON.parse(stored) : [];
+        return stored ? (JSON.parse(stored) as LogEntry[]) : [];
     }
 
     /**
@@ -293,15 +329,15 @@ export default class Logger {
      * @param {string} level - The severity level of the message (e.g., 'debug', 'info', 'warn', 'error').
      * @param {string} message - The message to log.
      */
-    private log(level: string, message: string, context?: any): void {
+    private log(level: string, message: string, context?: unknown): void {
         if (!this.plugin.settings.$.debug.enabled) {
             return;
         }
         const logEntry = {
             timestamp: new Date().toISOString(),
-            level: level,
-            message: message,
-            context: context,
+            level,
+            message,
+            context,
         };
 
         this.addLogEntry(logEntry);
@@ -322,7 +358,7 @@ export default class Logger {
         const levels = ['none', 'debug', 'info', 'warn', 'error'];
         const currentLevel = this.plugin.settings.$.debug.level;
 
-        if (currentLevel === 'none') {
+        if (currentLevel === DebugLevel.None) {
             return false;
         }
 
@@ -332,28 +368,28 @@ export default class Logger {
         return messageLevelIndex >= currentLevelIndex;
     }
 
-    debug(message: string, context?: any): void {
+    debug(message: string, context?: unknown): void {
         if (!this.shouldLog('debug')) {
             return;
         }
         this.log('DEBUG', message, context);
     }
 
-    info(message: string, context?: any): void {
+    info(message: string, context?: unknown): void {
         if (!this.shouldLog('info')) {
             return;
         }
         this.log('INFO', message, context);
     }
 
-    warn(message: string, context?: any): void {
+    warn(message: string, context?: unknown): void {
         if (!this.shouldLog('warn')) {
             return;
         }
         this.log('WARNING', message, context);
     }
 
-    error(message: string, context?: any): void {
+    error(message: string, context?: unknown): void {
         if (!this.shouldLog('error')) {
             return;
         }
@@ -384,7 +420,7 @@ export default class Logger {
 
         let result = '=== SYSTEM INFO ===\n';
         systemInfo.forEach((info) => {
-            result += JSON.stringify(info, null, 2) + '\n\n';
+            result += `${JSON.stringify(info, null, 2)  }\n\n`;
         });
 
         result += '\n=== LOGS ===\n';

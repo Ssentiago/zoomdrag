@@ -27,11 +27,11 @@ export class ServicePanel extends BasePanel<ServiceButtons> {
         );
     }
 
-    get cssClass() {
+    get cssClass(): string {
         return 'izd-service-panel';
     }
 
-    get cssStyles() {
+    get cssStyles(): object {
         return {
             ...this.unit.plugin.settings.$.panels.local.panels.service.position,
             gridTemplateColumns: 'repeat(auto-fit, minmax(24px, 1fr))',
@@ -39,7 +39,12 @@ export class ServicePanel extends BasePanel<ServiceButtons> {
         };
     }
 
-    getButtonsConfig() {
+    getButtonsConfig(): Array<{
+        id: ServiceButtons;
+        title: string;
+        icon: string;
+        action: () => void;
+    }> {
         const buttons = [];
 
         const serviceButtons =
@@ -154,7 +159,7 @@ export class ServicePanel extends BasePanel<ServiceButtons> {
             return;
         }
         if (document.fullscreenElement) {
-            requestAnimationFrame(() => {
+            window.requestAnimationFrame(() => {
                 this.unit.actions.resetZoomAndMove();
             });
             updateButton(
@@ -163,7 +168,7 @@ export class ServicePanel extends BasePanel<ServiceButtons> {
                 t.image.controlPanel.service.fullscreen.on
             );
         } else {
-            requestAnimationFrame(() => {
+            window.requestAnimationFrame(() => {
                 this.unit.actions.resetZoomAndMove();
             });
             updateButton(

@@ -11,8 +11,7 @@ interface LayoutModalProps {
     title: string;
 }
 
-const PanelLayoutModal: React.FC<LayoutModalProps> = ({ onClose, title }) => {
-    return (
+const PanelLayoutModal: React.FC<LayoutModalProps> = ({ onClose, title }) => (
         <OModal
             onClose={onClose}
             title={title}
@@ -53,6 +52,5 @@ const PanelLayoutModal: React.FC<LayoutModalProps> = ({ onClose, title }) => {
             <PanelLayout />
         </OModal>
     );
-};
 
 export default PanelLayoutModal;

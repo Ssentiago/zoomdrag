@@ -3,15 +3,11 @@ import Visibility from '@/settings/ui/pages/images/controls/visibility/Visibilit
 
 import React from 'react';
 
-import { useSettingsContext } from '../../../core/SettingsContext';
-
-const Controls: React.FC = () => {
-    return (
+const Controls: React.FC = () => (
         <>
             <Visibility />
             <Layout />
         </>
     );
-};
 
 export default Controls;

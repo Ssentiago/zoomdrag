@@ -22,7 +22,7 @@ export default class ImageConverter {
     }
 
     svgToCode(element: SVGElement): string {
-        if (element instanceof SVGElement) {
+        if (element.instanceOf(SVGElement)) {
             return new XMLSerializer().serializeToString(element);
         }
         return '';
@@ -40,13 +40,20 @@ export default class ImageConverter {
         img: HTMLImageElement,
         format: 'png' | 'jpeg'
     ): Promise<Blob> {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d')!;
+        const canvas = createEl('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) throw new Error('Failed to get 2d context');
         canvas.width = img.naturalWidth;
         canvas.height = img.naturalHeight;
         ctx.drawImage(img, 0, 0);
-        return new Promise((resolve) => {
-            canvas.toBlob((blob) => resolve(blob!), `image/${format}`);
+        return new Promise((resolve, reject) => {
+            canvas.toBlob(
+                (blob) => {
+                    if (blob) resolve(blob);
+                    else reject(new Error('toBlob returned null'));
+                },
+                `image/${format}`
+            );
         });
     }
 
@@ -74,10 +81,11 @@ export default class ImageConverter {
             img.onerror = reject;
         });
 
-        const canvas = document.createElement('canvas');
+        const canvas = createEl('canvas');
         canvas.width = rect.width;
         canvas.height = rect.height;
-        const ctx = canvas.getContext('2d')!;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) throw new Error('Failed to get 2d context');
 
         ctx.fillStyle = bgColor;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -85,7 +93,7 @@ export default class ImageConverter {
         ctx.drawImage(img, 0, 0);
 
         return new Promise((resolve, reject) => {
-            canvas.toBlob(async (blob) => {
+            canvas.toBlob((blob) => {
                 if (!blob) {
                     reject(new Error('toBlob returned null'));
                     return;

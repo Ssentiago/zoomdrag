@@ -42,7 +42,7 @@ export interface SystemInfo {
         online_status: boolean;
         cpu_cores: string | number;
         device_memory: number | 'unknown';
-        connection_type: string | 'unknown';
+        connection_type: string;
     };
     plugin: {
         name: string;

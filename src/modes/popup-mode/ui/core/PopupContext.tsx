@@ -1,12 +1,10 @@
 import PopupMode from '@/modes/popup-mode/popup-mode';
-import { useSettingsContext } from '@/settings/ui/core/SettingsContext';
 
 import React, {
     createContext,
     FC,
     ReactNode,
     useContext,
-    useEffect,
     useMemo,
     useState,
 } from 'react';
@@ -68,7 +66,7 @@ export const PopupContextProvider: FC<PopupProviderProps> = ({
     );
 };
 
-export const usePopupContext = () => {
+export const usePopupContext = (): PopupContextProps => {
     const context = useContext(PopupContext);
     if (context === undefined) {
         throw new Error('usePopupContext must be used within a PopupProvider');

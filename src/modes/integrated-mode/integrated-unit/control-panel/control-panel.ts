@@ -81,6 +81,6 @@ export class ControlPanel extends Component implements IControlPanel {
 
     onunload(): void {
         super.onunload();
-        this.controlPanel?.remove();
+        this.controlPanel.remove();
     }
 }

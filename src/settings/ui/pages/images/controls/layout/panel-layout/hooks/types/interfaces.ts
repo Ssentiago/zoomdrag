@@ -1,3 +1,5 @@
+import type React from 'react';
+
 import { Panels } from '@/settings/types/interfaces';
 
 export interface useDragDropProps {

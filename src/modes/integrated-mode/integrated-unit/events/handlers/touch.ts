@@ -1,5 +1,4 @@
 import { Component } from 'obsidian';
-import { Node } from 'ts-morph';
 
 import Events from '../events';
 import { Handler } from '../types/interfaces';
@@ -55,11 +54,11 @@ export class Touch extends Component implements Handler {
             this.startY = e.touches[0].clientY;
 
             if (this.tapTimeout) {
-                clearTimeout(this.tapTimeout);
+                window.clearTimeout(this.tapTimeout);
                 this.tapTimeout = null;
                 this.events.unit.actions.resetZoomAndMove({ animated: true });
             } else {
-                this.tapTimeout = setTimeout(() => {
+                this.tapTimeout = window.setTimeout(() => {
                     this.tapTimeout = null;
                 }, 300);
             }
@@ -69,7 +68,7 @@ export class Touch extends Component implements Handler {
             this.initialDistance = this.calculateDistance(e.touches);
 
             if (this.tapTimeout) {
-                clearTimeout(this.tapTimeout);
+                window.clearTimeout(this.tapTimeout);
                 this.tapTimeout = null;
             }
         }
@@ -85,12 +84,6 @@ export class Touch extends Component implements Handler {
 
         e.preventDefault();
         e.stopPropagation();
-
-        const content = this.events.unit.context.content;
-
-        if (!content) {
-            return;
-        }
 
         if (this.isDragging && e.touches.length === 1) {
             const dx = e.touches[0].clientX - this.startX;
@@ -130,8 +123,6 @@ export class Touch extends Component implements Handler {
         ) {
             return;
         }
-
-        const container = this.events.unit.context.container;
 
         const target = e.target as HTMLElement;
 

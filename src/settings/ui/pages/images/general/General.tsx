@@ -7,8 +7,7 @@ import Folding from './folding/Folding';
 import Interactive from './interactive/Interactive';
 import Size from './size/Size';
 
-const General: React.FC = (): React.ReactElement => {
-    return (
+const General: React.FC = (): React.ReactElement => (
         <>
             <Interactive />
             <Size />
@@ -17,6 +16,5 @@ const General: React.FC = (): React.ReactElement => {
             <Exclusions />
         </>
     );
-};
 
 export default General;

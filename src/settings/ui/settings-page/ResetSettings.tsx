@@ -24,7 +24,7 @@ const ResetSettings: FC = () => {
             variant='warning'
             label='Reset'
             tooltip={t.settings.toolbar.reset.tooltip}
-            onClick={resetAction}
+            onClick={() => void resetAction()}
         />
     );
 };

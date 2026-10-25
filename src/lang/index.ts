@@ -1,7 +1,13 @@
 import { LocaleSchema } from '@/lang/types/interfaces';
 
-function tf(text: string, params: Record<string, string>): string {
-    return text.replace(/\{\{(\w+)\}\}/g, (_, k) => params[k] ?? `{{${k}}}`);
+function tf(
+    text: string,
+    params: Record<string, string | undefined>
+): string {
+    return text.replace(
+        /\{\{(\w+)\}\}/g,
+        (_, k: string) => params[k] ?? `{{${k}}}`
+    );
 }
 
 let t: LocaleSchema;

@@ -36,7 +36,7 @@ export class Mouse extends Component implements Handler {
         this.registerDomEvent(container, 'click', this.click);
     }
 
-    get elements() {
+    get elements(): { container: HTMLElement; content: HTMLElement } {
         const container = this.events.unit.context.container;
         const content = this.events.unit.context.content;
         return { container, content };
@@ -55,7 +55,7 @@ export class Mouse extends Component implements Handler {
             return;
         }
 
-        const { content, container } = this.elements;
+        const { content } = this.elements;
 
         const viewportCenterX = event.clientX;
         const viewportCenterY = event.clientY;
@@ -68,8 +68,6 @@ export class Mouse extends Component implements Handler {
             (viewportCenterX - contentCenterX) / this.events.unit.scale;
         const offsetY =
             (viewportCenterY - contentCenterY) / this.events.unit.scale;
-
-        const factor = event.deltaY < 0 ? 1.1 : 0.9;
 
         const prevScale = this.events.unit.scale;
         this.events.unit.scale += event.deltaY * -0.001;

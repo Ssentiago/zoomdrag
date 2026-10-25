@@ -1,6 +1,6 @@
 import { t, tf } from '@/lang';
 
-import { FC, useState } from 'react';
+import React, { FC, useState } from 'react';
 
 import { OSetting } from '@obsidian-lib/native-react-components';
 import { Platform } from 'obsidian';
@@ -31,7 +31,6 @@ const AddNewImagePreset: FC = () => {
     const { updateUndoStack } = useUnitsHistoryContext();
 
     const handleAddUnit = async (): Promise<void> => {
-        debugger;
         const validationResult = validateBoth(name, selector);
 
         const validated = processValidationOnSave(validationResult);
@@ -42,8 +41,8 @@ const AddNewImagePreset: FC = () => {
         const oldUnits = [...units];
 
         const newUnit = {
-            name: name,
-            selector: selector,
+            name,
+            selector,
             on: true,
             panels: {
                 move: {
@@ -102,10 +101,9 @@ const AddNewImagePreset: FC = () => {
                 onChange={(e) => {
                     const value = e.target.value;
                     setName(value);
-                    const validationResult = validateName(value);
                     setNameError(validateName(name).tooltip);
                 }}
-                onKeyDown={onKeyDown}
+                onKeyDown={(e) => void onKeyDown(e)}
             />
         );
 
@@ -126,7 +124,7 @@ const AddNewImagePreset: FC = () => {
                     const validationResult = validateSelector(value);
                     setSelectorError(validationResult.tooltip);
                 }}
-                onKeyDown={onKeyDown}
+                onKeyDown={(e) => void onKeyDown(e)}
             />
         );
 
@@ -136,7 +134,7 @@ const AddNewImagePreset: FC = () => {
                     t.settings.pages.images.presets.addNewImagePreset.tooltips
                         .saveButton
                 }
-                onClick={handleAddUnit}
+                onClick={() => void handleAddUnit()}
                 data-icon={'save'}
             />
         );

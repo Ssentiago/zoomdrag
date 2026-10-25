@@ -1,12 +1,13 @@
 import { t, tf } from '@/lang';
 
-import { useSettingsContext } from '../../../../../core/SettingsContext';
+import {
+    UseImageConfigOperationsReturn,
+} from './types/interfaces';
 import { useUnitsHistoryContext } from '../../context/HistoryContext';
 import { useUnitsManagerContext } from '../../context/UnitsManagerContext';
 import { useUnitsValidation } from '../../hooks/useUnitsValidation';
 
-export const useImageConfigOperations = () => {
-    const { plugin } = useSettingsContext();
+export const useImageConfigOperations = (): UseImageConfigOperationsReturn => {
     const { validateBoth, processValidationOnSave } = useUnitsValidation();
     const { units, saveUnits } = useUnitsManagerContext();
     const { updateUndoStack } = useUnitsHistoryContext();
@@ -32,7 +33,7 @@ export const useImageConfigOperations = () => {
     };
 
     const handleToggle = async (index: number, value: boolean) => {
-        const oldUnits = JSON.parse(JSON.stringify(units));
+        const oldUnits = JSON.parse(JSON.stringify(units)) as typeof units;
         units[index].on = value;
         await saveUnits([...units]);
         const action = value
@@ -47,7 +48,7 @@ export const useImageConfigOperations = () => {
     };
 
     const handleSaveEditing = async (index: number) => {
-        const oldUnits = JSON.parse(JSON.stringify(units));
+        const oldUnits = JSON.parse(JSON.stringify(units)) as typeof units;
 
         const oldUnit = units[index];
 
@@ -56,7 +57,7 @@ export const useImageConfigOperations = () => {
         const editingSelectorInput: HTMLInputElement | null =
             document.querySelector('#editing-selector-input');
         if (!editingNameInput || !editingSelectorInput) {
-            return;
+            return undefined;
         }
 
         const validationResult = validateBoth(

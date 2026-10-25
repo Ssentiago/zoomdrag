@@ -1,6 +1,6 @@
 import { t, tf } from '@/lang';
 
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 
 import { OSetting } from '@obsidian-lib/native-react-components';
 import { Platform } from 'obsidian';
@@ -34,7 +34,10 @@ const isDimensionInValidRange = (
     return n >= min && n <= max;
 };
 
-const getErrorMessage = (field: 'width' | 'height', unit: DimensionType) => {
+const getErrorMessage = (
+    field: 'width' | 'height',
+    unit: DimensionType
+): string => {
     const range =
         unit === 'px'
             ? dimensionSpec.px.rangeMessage
@@ -44,23 +47,24 @@ const getErrorMessage = (field: 'width' | 'height', unit: DimensionType) => {
             return tf(
                 t.settings.pages.images.general.size.validation.invalidWidth,
                 {
-                    range: range,
+                    range,
                 }
             );
         case 'height':
             return tf(
                 t.settings.pages.images.general.size.validation.invalidHeight,
                 {
-                    range: range,
+                    range,
                 }
             );
+        default:
+            return '';
     }
 };
 
 const DimensionsOption: FC<DimensionsOptionProps> = ({
     type,
     initialOptions,
-    border,
 }) => {
     const { plugin } = useSettingsContext();
 
@@ -76,23 +80,14 @@ const DimensionsOption: FC<DimensionsOptionProps> = ({
     const [heightError, setHeightError] = useState('');
     const [widthError, setWidthError] = useState('');
 
-    const inputsRef = useRef<HTMLDivElement>(null);
-
-    const getName = useCallback(() => {
+    const getName = useCallback((): string => {
         switch (type) {
             case ComponentType.Expanded:
                 return t.settings.pages.images.general.size.expanded.name;
             case ComponentType.Folded:
                 return t.settings.pages.images.general.size.folded.name;
-        }
-    }, [type]);
-
-    const getDesc = useCallback(() => {
-        switch (type) {
-            case ComponentType.Expanded:
-                return t.settings.pages.images.general.size.expanded.desc;
-            case ComponentType.Folded:
-                return t.settings.pages.images.general.size.folded.desc;
+            default:
+                return '';
         }
     }, [type]);
 
@@ -209,7 +204,7 @@ const DimensionsOption: FC<DimensionsOptionProps> = ({
                         setValue(val);
                         validateFn(val, unit);
                     }}
-                    onKeyDown={onKeyDown}
+                    onKeyDown={(e) => void onKeyDown(e)}
                 />
                 <select
                     value={unit}
@@ -267,7 +262,7 @@ const DimensionsOption: FC<DimensionsOptionProps> = ({
                                 t.settings.pages.images.general.size
                                     .saveButtonTooltip
                             }
-                            onClick={handleSave}
+                            onClick={() => void handleSave()}
                             data-icon={'save'}
                         />
                     </OSetting>
@@ -299,7 +294,7 @@ const DimensionsOption: FC<DimensionsOptionProps> = ({
                             t.settings.pages.images.general.size
                                 .saveButtonTooltip
                         }
-                        onClick={handleSave}
+                        onClick={() => void handleSave()}
                         data-icon={'save'}
                     />
                 </OSetting>

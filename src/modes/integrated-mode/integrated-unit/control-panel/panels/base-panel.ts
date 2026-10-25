@@ -1,5 +1,7 @@
 import { Component } from 'obsidian';
 
+import { PanelsTriggering } from '../../../../../settings/types/interfaces';
+import IntegratedUnit from '../../integrated-unit';
 import { TriggerType } from '../../types/constants';
 import { updateButton } from '../helpers/helpers';
 import { IControlPanel } from '../types/interfaces';
@@ -58,7 +60,7 @@ export abstract class BasePanel<TButtonKey extends string> extends Component {
         });
     }
 
-    get unit() {
+    get unit(): IntegratedUnit {
         return this.controlPanel.unit;
     }
 
@@ -84,7 +86,7 @@ export abstract class BasePanel<TButtonKey extends string> extends Component {
 
     protected createPanelElement(): HTMLElement {
         const controlPanel = this.controlPanel.controlPanel;
-        const panel = controlPanel.createEl('div');
+        const panel = controlPanel.createDiv();
         panel.addClass(this.cssClass);
         panel.addClass('izd-panel');
         panel.addClass('visible');
@@ -99,7 +101,7 @@ export abstract class BasePanel<TButtonKey extends string> extends Component {
         id: string,
         gridArea?: string
     ): HTMLButtonElement {
-        const button = document.createElement('button');
+        const button = createEl('button');
         button.id = id;
 
         button.setCssStyles({
@@ -148,10 +150,10 @@ export abstract class BasePanel<TButtonKey extends string> extends Component {
         if (isFolded) {
             trigger |= TriggerType.FOLD;
         }
-        if (triggeringMode === 'focus') {
+        if (triggeringMode === PanelsTriggering.FOCUS) {
             trigger |= TriggerType.FOCUS;
         }
-        if (triggeringMode === 'hover') {
+        if (triggeringMode === PanelsTriggering.HOVER) {
             trigger |= TriggerType.MOUSE;
         }
 
@@ -160,10 +162,6 @@ export abstract class BasePanel<TButtonKey extends string> extends Component {
 
     show(triggerType: TriggerType): void {
         if (!this.shouldRespondToTrigger(triggerType)) {
-            return;
-        }
-
-        if (!this.panel) {
             return;
         }
 
@@ -176,17 +174,13 @@ export abstract class BasePanel<TButtonKey extends string> extends Component {
             return;
         }
 
-        if (!this.panel) {
-            return;
-        }
-
         this.panel.removeClass('visible');
         this.panel.addClass('hidden');
     }
 
     isVisible(): boolean {
         return (
-            this.panel?.classList?.contains('visible') &&
+            this.panel.classList.contains('visible') &&
             !this.panel.classList.contains('hidden')
         );
     }
@@ -205,11 +199,11 @@ export abstract class BasePanel<TButtonKey extends string> extends Component {
         let base =
             TriggerType.FORCE | TriggerType.FOLD | TriggerType.SERVICE_HIDING;
 
-        if (triggeringOptions.mode === 'hover') {
+        if (triggeringOptions.mode === PanelsTriggering.HOVER) {
             base = base | TriggerType.MOUSE;
         }
 
-        if (triggeringOptions.mode === 'focus') {
+        if (triggeringOptions.mode === PanelsTriggering.FOCUS) {
             base = base | TriggerType.FOCUS;
         }
 

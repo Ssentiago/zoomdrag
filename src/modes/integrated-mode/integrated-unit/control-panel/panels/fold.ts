@@ -24,7 +24,7 @@ export class FoldPanel extends BasePanel<FoldButtons> {
         return true;
     }
 
-    get cssStyles() {
+    get cssStyles(): object {
         return {
             position: 'absolute',
             left: '50%',
@@ -34,7 +34,7 @@ export class FoldPanel extends BasePanel<FoldButtons> {
         };
     }
 
-    get cssClass() {
+    get cssClass(): string {
         return 'izd-fold-panel';
     }
 
@@ -99,7 +99,7 @@ export class FoldPanel extends BasePanel<FoldButtons> {
         );
 
         this.unit.plugin.domWatcher.subscribe(foldCondition, (mutation) => {
-            if (!(mutation.target instanceof HTMLElement)) return;
+            if (!(mutation.target.instanceOf(HTMLElement))) return;
             const isFolded = mutation.target.dataset.folded === 'true';
 
             const button = this.buttons.get(FoldButtons.Fold);

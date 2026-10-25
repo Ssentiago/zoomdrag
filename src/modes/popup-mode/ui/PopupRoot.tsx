@@ -14,8 +14,7 @@ const PopupRoot: FC<PopupRootProps> = ({
     popupMode,
     initialImages,
     onClose,
-}) => {
-    return (
+}) => (
         <PopupContextProvider
             popupMode={popupMode}
             initialImages={initialImages}
@@ -24,6 +23,5 @@ const PopupRoot: FC<PopupRootProps> = ({
             <Popup />
         </PopupContextProvider>
     );
-};
 
 export default PopupRoot;

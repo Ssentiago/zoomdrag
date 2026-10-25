@@ -20,11 +20,11 @@ export class ZoomPanel extends BasePanel<ZoomButtons> {
         );
     }
 
-    get cssClass() {
+    get cssClass(): string {
         return 'izd-zoom-panel';
     }
 
-    get cssStyles() {
+    get cssStyles(): object {
         return {
             ...this.controlPanel.unit.plugin.settings.$.panels.local.panels.zoom
                 .position,

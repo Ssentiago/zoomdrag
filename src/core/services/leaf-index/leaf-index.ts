@@ -3,9 +3,11 @@ import { SettingsEventPayload } from '@/settings/types/interfaces';
 
 import { Component, MarkdownView } from 'obsidian';
 
-import { LeafIndexData } from '../types/interfaces';
-import { BaseUnitContext } from '../types/interfaces';
-import { LeafContext } from '../types/interfaces';
+import {
+    BaseUnitContext,
+    LeafContext,
+    LeafIndexData,
+} from '../types/interfaces';
 import ImageIndexer from './image-indexer';
 
 export default class LeafIndex extends Component {
@@ -26,11 +28,11 @@ export default class LeafIndex extends Component {
      *
      */
     private setupObsidianEventHandlers(): void {
-        this.plugin.app.workspace.on('layout-change', async () => {
-            await this.updateIndex();
+        this.plugin.app.workspace.on('layout-change', () => {
+            void this.updateIndex();
         });
-        this.plugin.app.workspace.on('active-leaf-change', async () => {
-            await this.updateIndex();
+        this.plugin.app.workspace.on('active-leaf-change', () => {
+            void this.updateIndex();
         });
     }
     private setupOwnEventsHandler() {
@@ -66,13 +68,15 @@ export default class LeafIndex extends Component {
         }
 
         data.indexer = new ImageIndexer(this);
-        data.indexer?.enable();
+        data.indexer.enable();
     }
 
-    async onunload(): Promise<void> {
-        for (const leafID of this.data.keys()) {
-            await this.cleanupLeafData(leafID);
-        }
+    onunload(): void {
+        void (async () => {
+            for (const leafID of this.data.keys()) {
+                await this.cleanupLeafData(leafID);
+            }
+        })();
     }
 
     private async initializeActiveLeaf(): Promise<void> {
@@ -188,7 +192,7 @@ export default class LeafIndex extends Component {
     private matchPattern(pattern: string, filePath: string): boolean {
         if (pattern.endsWith('/')) {
             return (
-                filePath.startsWith(pattern) || filePath.includes('/' + pattern)
+                filePath.startsWith(pattern) || filePath.includes(`/${  pattern}`)
             );
         }
 

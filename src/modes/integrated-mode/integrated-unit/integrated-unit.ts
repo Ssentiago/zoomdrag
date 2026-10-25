@@ -5,7 +5,11 @@ import { UnitActions } from './actions/unit-actions';
 import { ControlPanel } from './control-panel/control-panel';
 import Events from './events/events';
 import IntegratedUnitStateManager from './integrated-unit-state-manager';
-import { FileStats, UnitContext } from './types/interfaces';
+import {
+    FileStats,
+    UnitContext,
+    UnitSize,
+} from './types/interfaces';
 
 export default class IntegratedUnit extends Component {
     id!: string;
@@ -58,7 +62,7 @@ export default class IntegratedUnit extends Component {
         });
     }
 
-    get realSize() {
+    get realSize(): UnitSize {
         const normalizeOriginalSize = () => {
             const originalSize = this.context.size;
             const availableSize =

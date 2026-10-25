@@ -4,10 +4,7 @@ import AvailableImagePresets from '@/settings/ui/pages/images/presets/available-
 import { FC } from 'react';
 
 import { UnitsHistoryProvider } from './context/HistoryContext';
-import {
-    UnitsManagerProvider,
-    useUnitsManagerContext,
-} from './context/UnitsManagerContext';
+import { useUnitsManagerContext } from './context/UnitsManagerContext';
 
 const Presets: FC = () => {
     const { units, saveUnits } = useUnitsManagerContext();
