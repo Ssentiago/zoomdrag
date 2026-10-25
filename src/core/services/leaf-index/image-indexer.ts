@@ -280,9 +280,7 @@ export default class ImageIndexer {
 
     protected findElementWithLivePreviewWidget(
         el: Element | undefined
-    ):
-        | import('/home/arseny/WebstormProjects/diagram-zoom-drag/src/modes/integrated-mode/adapters/types/interfaces').HTMLElementWithCMView
-        | undefined {
+    ): HTMLElementWithCMView | undefined {
         if (el === undefined) {
             return undefined;
         }

@@ -2,7 +2,7 @@ import { LocaleProxy } from '@/lang/t/dev/proxy/locale-proxy';
 import { PartialLocale } from '@/lang/t/types/definitions';
 import { LocaleSchema } from '@/lang/types/interfaces';
 
-import { moment } from 'obsidian';
+import { moment } from '@/utils/moment';
 
 import en from '../../locale/en';
 

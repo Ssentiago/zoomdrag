@@ -1,6 +1,6 @@
 import IzdPlugin from '@/core/izd-plugin';
 
-import { moment } from 'obsidian';
+import { moment } from '@/utils/moment';
 
 export default class UserState {
     isFirstLaunch = false;

@@ -1,4 +1,4 @@
-import { Component, moment } from 'obsidian';
+import { Component } from 'obsidian';
 import { Node } from 'ts-morph';
 
 import Events from '../events';

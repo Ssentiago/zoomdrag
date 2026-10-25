@@ -1,7 +1,9 @@
 import IzdPlugin from '@/core/izd-plugin';
 import { ShortSystemInfo, SystemInfo } from '@/core/services/types/interfaces';
 
-import { moment, normalizePath, Platform } from 'obsidian';
+import { normalizePath, Platform } from 'obsidian';
+
+import { moment } from '@/utils/moment';
 
 export default class Logger {
     private readonly maxEntries = 2000;

@@ -243,9 +243,9 @@ export default class IntegratedMode extends Component {
                     this,
                     this.context.view?.file?.stat!
                 );
-                const currentModeImages = images.imageIndex
-                    .values()
-                    .filter((i) => i.mode === mode);
+                const currentModeImages = Array.from(
+                    images.imageIndex.values()
+                ).filter((i) => i.mode === mode);
                 for (const image of currentModeImages) {
                     await adapter.initialize(image);
                 }
