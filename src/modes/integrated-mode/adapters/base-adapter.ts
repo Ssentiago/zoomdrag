@@ -11,7 +11,6 @@ import {
     FileStats,
 } from '@/modes/integrated-mode/integrated-unit/types/interfaces';
 
-import IzdPlugin from '../../../core/izd-plugin';
 import { ImageConfig } from '../../../settings/types/interfaces';
 import { IntegratedAdapters } from './types/constants';
 import { HTMLElementWithCMView } from './types/interfaces';
@@ -22,7 +21,7 @@ export default abstract class BaseAdapter {
         protected fileStat: FileStats
     ) {}
 
-    abstract initialize: (...args: any[]) => Promise<void>;
+    abstract initialize: (...args: unknown[]) => Promise<void>;
 
     matchInteractiveElement(
         element: Element
@@ -59,8 +58,13 @@ export default abstract class BaseAdapter {
     }
 
     protected initializationGuard(context: Partial<UnitContext>): boolean {
+        const el = context.element;
+        if (!el) {
+            return false;
+        }
+
         if (
-            context.element!.dataset.interactiveInitializationStatus !==
+            el.dataset.interactiveInitializationStatus !==
             undefined
         ) {
             return false;
@@ -70,18 +74,19 @@ export default abstract class BaseAdapter {
 
         if (
             context.adapter === IntegratedAdapters.LivePreview &&
-            (context.element as HTMLElementWithCMView).cmView
+            (el as HTMLElementWithCMView).cmView
         ) {
             status = false;
         } else if (
+            context.adapter !== undefined &&
             [
                 IntegratedAdapters.Preview,
                 IntegratedAdapters.PickerMode,
-            ].includes(context.adapter!)
+            ].includes(context.adapter)
         ) {
             status = true;
         }
-        context.element!.setAttribute(
+        el.setAttribute(
             'data-interactive-initialization-status',
             status
                 ? InteractiveInitialization.Initialized
@@ -106,7 +111,11 @@ export default abstract class BaseAdapter {
     protected getElSize(context: Partial<UnitContext>): UnitSize {
         const el = context.element;
 
-        const rect = el!.getBoundingClientRect();
+        if (!el) {
+            throw new Error('Missing element in context');
+        }
+
+        const rect = el.getBoundingClientRect();
 
         return {
             width: rect.width,
@@ -144,13 +153,16 @@ export default abstract class BaseAdapter {
     async createInteractiveElementWrapper(
         context: Partial<UnitContext>
     ): Promise<Partial<UnitContext>> {
-        const container = document.createElement('div');
-        const content = document.createElement('div');
+        const container = createDiv();
+        const content = createDiv();
 
         container.addClass('izd-container');
         content.addClass('izd-content');
 
-        const el = context.element!;
+        const el = context.element;
+        if (!el) {
+            throw new Error('Missing element in context');
+        }
         const originalParent = el.parentElement as HTMLElement;
 
         const renderingMode = this.integratedMode.plugin.integratedMode.context
@@ -177,10 +189,10 @@ export default abstract class BaseAdapter {
         let current = el as HTMLElement | null | undefined;
 
         while (current && current !== document.body) {
-            if ((current as HTMLElementWithCMView)?.cmView) {
-                return current as HTMLElementWithCMView;
+            if ((current as HTMLElementWithCMView).cmView) {
+                return current;
             }
-            current = current?.parentElement;
+            current = current.parentElement;
         }
         return undefined;
     }
@@ -194,7 +206,7 @@ export default abstract class BaseAdapter {
         this.integratedMode.plugin.logger.debug(
             `Processing unit for adapter: ${adapter}`,
             {
-                unitType: context.options!.name,
+                unitType: context.options?.name,
             }
         );
 
@@ -222,9 +234,9 @@ export default abstract class BaseAdapter {
         const { container, content, originalParent } =
             await this.createInteractiveElementWrapper(context);
 
-        context.container = container!;
-        context.content = content!;
-        context.originalParent = originalParent!;
+        context.container = container;
+        context.content = content;
+        context.originalParent = originalParent;
         context.size = size;
         context.layout = layout;
 

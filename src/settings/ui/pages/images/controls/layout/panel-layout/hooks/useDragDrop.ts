@@ -1,7 +1,7 @@
 import { DragItem, PanelPosition } from '@/settings/types/interfaces';
 import { useSettingsContext } from '@/settings/ui/core/SettingsContext';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 import { Platform } from 'obsidian';
 
@@ -130,7 +130,13 @@ const calculatePosition = (
     return position;
 };
 
-const useDragDrop = ({ unitPreviewRef, panels }: useDragDropProps) => {
+const useDragDrop = ({
+    unitPreviewRef,
+    panels,
+}: useDragDropProps): {
+    draggedPanel: string | null;
+    props: Record<string, unknown>;
+} => {
     const { plugin } = useSettingsContext();
 
     const [draggedPanel, setDraggedPanel] = useState<string | null>(null);
@@ -197,14 +203,16 @@ const useDragDrop = ({ unitPreviewRef, panels }: useDragDropProps) => {
 
         const touch = e.touches[0];
         const panel = e.currentTarget as HTMLElement;
-        const dragData = JSON.parse(panel.dataset.dragData ?? '{}');
+        const dragData = JSON.parse(
+            panel.dataset.dragData ?? '{}'
+        ) as { offsetX: number; offsetY: number };
         const containerRect = container.getBoundingClientRect();
         const x = touch.clientX - containerRect.left - dragData.offsetX;
         const y = touch.clientY - containerRect.top - dragData.offsetY;
         const position = calculatePosition(x, y, containerRect);
 
-        panel.style.left = position.left!;
-        panel.style.top = position.top!;
+        panel.style.left = position.left ?? '';
+        panel.style.top = position.top ?? '';
     };
 
     const handleTouchEnd = async (e: React.TouchEvent): Promise<void> => {
@@ -214,7 +222,13 @@ const useDragDrop = ({ unitPreviewRef, panels }: useDragDropProps) => {
         }
 
         const panel = e.currentTarget as HTMLElement;
-        const dragData = JSON.parse(panel.dataset.dragData ?? '{}');
+        const dragData = JSON.parse(
+            panel.dataset.dragData ?? '{}'
+        ) as {
+            offsetX: number;
+            offsetY: number;
+            panelName: keyof typeof panels;
+        };
         const touch = e.changedTouches[0];
 
         const containerRect = container.getBoundingClientRect();
@@ -223,7 +237,7 @@ const useDragDrop = ({ unitPreviewRef, panels }: useDragDropProps) => {
 
         const position = calculatePosition(x, y, containerRect);
 
-        const panelName = dragData.panelName as keyof typeof panels;
+        const panelName = dragData.panelName;
         panels[panelName].position = position;
 
         setDraggedPanel(null);
@@ -232,27 +246,23 @@ const useDragDrop = ({ unitPreviewRef, panels }: useDragDropProps) => {
 
     const props = Platform.isDesktopApp
         ? {
-              panel: (name: string) => {
-                  return {
+              panel: (name: string) => ({
                       draggable: true,
                       onDragStart: (e: React.DragEvent) =>
                           handleDragStart(e, name),
-                  };
-              },
+                  }),
               container: {
                   onDrop: handleDrop,
                   onDragOver: (e: React.DragEvent) => e.preventDefault(),
               },
           }
         : {
-              panel: (name: string) => {
-                  return {
+              panel: (name: string) => ({
                       onTouchStart: (e: React.TouchEvent) =>
                           handleTouchStart(e, name),
                       onTouchMove: (e: React.TouchEvent) => handleTouchMove(e),
                       onTouchEnd: (e: React.TouchEvent) => handleTouchEnd(e),
-                  };
-              },
+                  }),
               container: {},
           };
 

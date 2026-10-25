@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 interface UseDragProps {
     initialPosition: { x: number; y: number };
@@ -50,7 +50,7 @@ const useDrag = ({
     const onMouseUp = useCallback(() => {
         setIsDragging(false);
 
-        onDragEnd?.(hasActuallyDragged);
+        onDragEnd(hasActuallyDragged);
     }, [hasActuallyDragged, onDragEnd]);
 
     return {

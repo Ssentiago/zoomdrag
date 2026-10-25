@@ -31,16 +31,17 @@ export default class IntegratedMode extends Component {
         this.setupDomSubscriptions();
     }
 
-    async onunload(): Promise<void> {
-        await this.state.clear();
+    onunload(): void {
+        void this.state.clear();
     }
 
     private setupCommands(): void {
         this.plugin.addCommand({
             id: 'toggle-panels-state',
             name: 'Toggle control panels visibility for all the active interactive images in current note',
-            checkCallback: (checking: boolean) => {
-                const units = this.state.getUnits(this.context.leafID!);
+            checkCallback: (checking: boolean): boolean | undefined => {
+                const leafID = this.context.leafID;
+                const units = leafID ? this.state.getUnits(leafID) : [];
 
                 if (checking) {
                     return (
@@ -52,14 +53,14 @@ export default class IntegratedMode extends Component {
                 }
                 if (!this.context.active) {
                     this.plugin.showNotice(t.commands.togglePanels.notice.noMd);
-                    return;
+                    return undefined;
                 }
 
                 if (!units.some((d) => d.active)) {
                     this.plugin.showNotice(
                         t.commands.togglePanels.notice.noActiveImages
                     );
-                    return;
+                    return undefined;
                 }
 
                 const filteredU = units.filter((d) => d.active);
@@ -97,7 +98,7 @@ export default class IntegratedMode extends Component {
                     return;
 
                 const isNativeEventsEnabled = this.state.data.get(
-                    this.context.leafID!
+                    this.context.leafID ?? ('' as LeafID)
                 )?.nativeTouchEventsEnabled;
                 if (isNativeEventsEnabled === undefined) return;
 
@@ -110,9 +111,13 @@ export default class IntegratedMode extends Component {
                     );
 
                     item.onClick(() => {
-                        const data = this.state.data.get(this.context.leafID!)!;
-                        data.nativeTouchEventsEnabled =
-                            !data.nativeTouchEventsEnabled;
+                        const data = this.state.data.get(
+                            this.context.leafID ?? ('' as LeafID)
+                        );
+                        if (data) {
+                            data.nativeTouchEventsEnabled =
+                                !data.nativeTouchEventsEnabled;
+                        }
                     });
                 });
             })
@@ -137,54 +142,68 @@ export default class IntegratedMode extends Component {
             });
         });
 
-        this.plugin.emitter.on('create-integrated-element', async (element) => {
-            const view =
-                this.plugin.app.workspace.getActiveViewOfType(MarkdownView);
-            const ctx = this.plugin.leafIndex.data
-                .get(view?.leaf.id!)
-                ?.imageIndex.get(element);
+        this.plugin.emitter.on('create-integrated-element', (element: Element) => {
+            void (async () => {
+                const view =
+                    this.plugin.app.workspace.getActiveViewOfType(MarkdownView);
+                const leafID = view?.leaf.id;
+                if (!leafID || !view.file) return;
+                const ctx = this.plugin.leafIndex.data
+                    .get(leafID)
+                    ?.imageIndex.get(element);
 
-            if (!ctx) {
-                return;
-            }
+                if (!ctx) {
+                    return;
+                }
 
-            const mdAdapter = new MdViewAdapter(this, view!.file!.stat);
+                const mdAdapter = new MdViewAdapter(this, view.file.stat);
 
-            await mdAdapter.initialize(ctx);
+                await mdAdapter.initialize(ctx);
+            })();
         });
 
         this.plugin.emitter.on(
             'create-integrated-element-outside-view',
-            async (ctx: BaseUnitContext) => {
-                const mdAdapter = new MdViewAdapter(this, {
-                    ctime: 0,
-                    size: 0,
-                    mtime: 0,
-                });
-                await mdAdapter.initialize(ctx);
+            (ctx: BaseUnitContext) => {
+                void (async () => {
+                    const mdAdapter = new MdViewAdapter(this, {
+                        ctime: 0,
+                        size: 0,
+                        mtime: 0,
+                    });
+                    await mdAdapter.initialize(ctx);
+                })();
             }
         );
 
         this.plugin.emitter.on(
             'leaf-index.image.added',
-            async (imageData: BaseUnitContext) => {
-                if (this.plugin.help.isHelpOpen) return;
+            (imageData: BaseUnitContext) => {
+                void (async () => {
+                    if (this.plugin.help.isHelpOpen) return;
 
-                const view =
-                    this.plugin.app.workspace.getActiveViewOfType(MarkdownView);
+                    const view =
+                        this.plugin.app.workspace.getActiveViewOfType(
+                            MarkdownView
+                        );
 
-                if (!view) {
-                    this.plugin.logger.warn(
-                        'No active Markdown view found for image data',
-                        imageData
+                    if (!view?.file) {
+                        this.plugin.logger.warn(
+                            'No active Markdown view found for image data',
+                            imageData
+                        );
+                        return;
+                    }
+
+                    const mdAdapter = new MdViewAdapter(
+                        this,
+                        view.file.stat
                     );
-                    return;
-                }
 
-                const mdAdapter = new MdViewAdapter(this, view.file!.stat);
-
-                this.plugin.settings.$.units.interactivity.markdown
-                    .autoDetect && (await mdAdapter.initialize(imageData));
+                    this.plugin.settings.$.units.interactivity.markdown
+                        .autoDetect &&
+                        (await mdAdapter.initialize(imageData));
+                })();
             }
         );
     }
@@ -193,7 +212,9 @@ export default class IntegratedMode extends Component {
         const onLeafEvent = async (
             event: 'active-leaf-change' | 'layout-change'
         ) => {
-            this.context.cleanup((leafID) => this.state.cleanupLeaf(leafID));
+            this.context.cleanup((leafID) => {
+                void this.state.cleanupLeaf(leafID);
+            });
             this.context.initialize((leafID) => {
                 this.state.initializeLeaf(leafID);
                 this.setupResizeObserver(leafID);
@@ -204,59 +225,68 @@ export default class IntegratedMode extends Component {
             }
 
             if (event === 'layout-change') {
-                await this.state.cleanupUnitsOnFileChange(
-                    this.context.leafID!,
-                    this.context.view!.file!.stat
-                );
-                await this.state.cleanOrphan();
+                const leafID = this.context.leafID;
+                const file = this.context.view?.file;
+                if (leafID && file) {
+                    await this.state.cleanupUnitsOnFileChange(
+                        leafID,
+                        file.stat
+                    );
+                    await this.state.cleanOrphan();
+                }
             }
         };
 
         this.plugin.registerEvent(
-            this.plugin.app.workspace.on('layout-change', async () => {
-                this.plugin.logger.debug(
-                    'Calling withing the layout-change-event...'
-                );
+            this.plugin.app.workspace.on('layout-change', () => {
+                void (async () => {
+                    this.plugin.logger.debug(
+                        'Calling withing the layout-change-event...'
+                    );
 
-                await onLeafEvent('layout-change');
+                    await onLeafEvent('layout-change');
 
-                const leafId = this.context.leafID;
-                if (!leafId) {
-                    return;
-                }
+                    const leafId = this.context.leafID;
+                    if (!leafId) {
+                        return;
+                    }
 
-                const images = this.plugin.leafIndex.data.get(leafId);
-                if (!images) {
-                    return;
-                }
+                    const images = this.plugin.leafIndex.data.get(leafId);
+                    if (!images) {
+                        return;
+                    }
 
-                const mode = this.context.inPreviewMode
-                    ? 'preview'
-                    : this.context.inLivePreviewMode
-                      ? 'live-preview'
-                      : undefined;
-                if (!mode) {
-                    return;
-                }
+                    const mode = this.context.inPreviewMode
+                        ? 'preview'
+                        : this.context.inLivePreviewMode
+                          ? 'live-preview'
+                          : undefined;
+                    if (!mode) {
+                        return;
+                    }
 
-                const adapter = new MdViewAdapter(
-                    this,
-                    this.context.view?.file?.stat!
-                );
-                const currentModeImages = Array.from(
-                    images.imageIndex.values()
-                ).filter((i) => i.mode === mode);
-                for (const image of currentModeImages) {
-                    await adapter.initialize(image);
-                }
+                    const stat = this.context.view?.file?.stat;
+                    if (!stat) {
+                        return;
+                    }
+                    const adapter = new MdViewAdapter(this, stat);
+                    const currentModeImages = Array.from(
+                        images.imageIndex.values()
+                    ).filter((i) => i.mode === mode);
+                    for (const image of currentModeImages) {
+                        await adapter.initialize(image);
+                    }
+                })();
             })
         );
         this.plugin.registerEvent(
-            this.plugin.app.workspace.on('active-leaf-change', async () => {
-                this.plugin.logger.debug(
-                    'Called withing the active-leaf-change event...'
-                );
-                await onLeafEvent('active-leaf-change');
+            this.plugin.app.workspace.on('active-leaf-change', () => {
+                void (async () => {
+                    this.plugin.logger.debug(
+                        'Called withing the active-leaf-change event...'
+                    );
+                    await onLeafEvent('active-leaf-change');
+                })();
             })
         );
     }
@@ -275,26 +305,29 @@ export default class IntegratedMode extends Component {
             true
         );
 
-        const obs = new ResizeObserver((entries, observer) => {
+        const obs = new ResizeObserver(() => {
             debouncedApplyLayout();
         });
-        obs.observe(this.context.view?.contentEl!);
-        this.state.setResizeObserver(leafID, obs);
+        const contentEl = this.context.view?.contentEl;
+        if (contentEl) {
+            obs.observe(contentEl);
+            this.state.setResizeObserver(leafID, obs);
+        }
     }
 
     private setupDomSubscriptions(): void {
         this.plugin.domWatcher.subscribe(
             (mutation) =>
                 mutation.type === 'attributes' &&
-                mutation.target instanceof Element &&
+                mutation.target.instanceOf(Element) &&
                 (mutation.target.hasClass('markdown-source-view') ||
                     mutation.target.hasClass('markdown-preview-view')) &&
                 mutation.attributeName === 'class' &&
                 (!!mutation.oldValue?.contains('is-readable-line-width') ||
                     mutation.target.hasClass('is-readable-line-width')) &&
                 this.context.active &&
-                this.context.leaf!.containerEl.contains(mutation.target),
-            (mutation) => {
+                this.context.leaf?.containerEl.contains(mutation.target),
+            () => {
                 this.plugin.emitter.emit('leaf-layout-changed');
             }
         );

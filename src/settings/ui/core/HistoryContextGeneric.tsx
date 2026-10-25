@@ -7,11 +7,14 @@ import {
     useMemo,
 } from 'react';
 
+import {
+    CreateHistoryContextReturn,
+    UndoRedoContextProps,
+} from './types/interfaces';
 import { useHistory } from '../hooks/useHistory';
 import { useSettingsContext } from './SettingsContext';
-import { UndoRedoContextProps } from './types/interfaces';
 
-const createHistoryContext = <T extends readonly unknown[]>() => {
+const createHistoryContext = <T extends readonly unknown[]>(): CreateHistoryContextReturn<T> => {
     const Context = createContext<UndoRedoContextProps<T> | undefined>(
         undefined
     );
@@ -49,7 +52,7 @@ const createHistoryContext = <T extends readonly unknown[]>() => {
                     getRedoLabel,
                     getUndoLabel,
                     updateUndoStack,
-                }) as UndoRedoContextProps<T>,
+                }),
             [
                 undo,
                 canUndo,
@@ -61,15 +64,13 @@ const createHistoryContext = <T extends readonly unknown[]>() => {
             ]
         );
 
-        useEffect(() => {
-            return () => {
+        useEffect(() => () => {
                 plugin.settings.emitter.emit('settings-clear-history', {
                     eventName: 'settings-clear-history',
                     oldValue: undefined,
                     newValue: undefined,
                 });
-            };
-        }, [plugin]);
+            }, [plugin]);
 
         return (
             <Context.Provider value={contextValue}>{children}</Context.Provider>

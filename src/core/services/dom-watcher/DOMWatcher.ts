@@ -18,10 +18,12 @@ export default class DOMWatcher extends Component {
     }
 
     private enable(): void {
-        this.observer = new MutationObserver(async (mutations) => {
-            for (const mutation of mutations) {
-                await this.processMutation(mutation);
-            }
+        this.observer = new MutationObserver((mutations) => {
+            void (async () => {
+                for (const mutation of mutations) {
+                    await this.processMutation(mutation);
+                }
+            })();
         });
         this.observer.observe(document.body, {
             childList: true, // Add/removal of children

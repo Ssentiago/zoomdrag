@@ -5,6 +5,6 @@ export interface DimensionsOptionProps {
     type: ComponentType;
     initialOptions:
         | DefaultSettings['units']['size']['folded']
-        | DefaultSettings['units']['size']['expanded'];
+         ;
     border?: boolean;
 }

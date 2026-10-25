@@ -32,13 +32,17 @@ export default class IntegratedUnitStateManager extends Component {
         await this.activate(true);
     }
 
-    onToggleElement = async (data: { element: Element }) => {
+    onToggleElement = (data: { element: Element }): void => {
         if (data.element === this.unit.context.element) {
-            this.unit.active ? await this.deactivate() : await this.activate();
+            void (async () => {
+                this.unit.active
+                    ? await this.deactivate()
+                    : await this.activate();
+            })();
         }
     };
 
-    activate = async (noAnimation?: boolean) => {
+    activate = async (noAnimation?: boolean): Promise<void> => {
         if (this.unit.active) {
             return;
         }
@@ -65,7 +69,7 @@ export default class IntegratedUnitStateManager extends Component {
         this.unit.context.originalParent.style.removeProperty('transform');
     };
 
-    deactivate = async () => {
+    deactivate = async (): Promise<void> => {
         if (!this.unit.active) {
             return;
         }
@@ -78,7 +82,7 @@ export default class IntegratedUnitStateManager extends Component {
             this.unit.context.originalParent,
             async () => {
                 this.unit.unload();
-                this.unit.controlPanel.controlPanel?.remove();
+                this.unit.controlPanel.controlPanel.remove();
                 await this.switchToNonInteractive();
             }
         );
@@ -189,9 +193,9 @@ export default class IntegratedUnitStateManager extends Component {
 
         if (this.unit.context.adapter === IntegratedAdapters.LivePreview) {
             const lPreviewWidget = this.unit.context.livePreviewWidget;
-            lPreviewWidget?.removeClass('live-preview-parent');
-            lPreviewWidget?.style?.removeProperty('height');
-            lPreviewWidget?.style?.removeProperty('width');
+            lPreviewWidget.removeClass('live-preview-parent');
+            lPreviewWidget.style.removeProperty('height');
+            lPreviewWidget.style.removeProperty('width');
         }
 
         if (!originalParent.contains(container)) {
@@ -204,7 +208,7 @@ export default class IntegratedUnitStateManager extends Component {
         container.remove();
         content.remove();
 
-        await new Promise((resolve) => requestAnimationFrame(resolve));
+        await new Promise((resolve) => window.requestAnimationFrame(resolve));
     }
 
     private waitForElementsLayout(elements: Element[]): Promise<void> {
@@ -221,7 +225,7 @@ export default class IntegratedUnitStateManager extends Component {
                 });
 
                 if (!allReady) {
-                    requestAnimationFrame(checkLayout);
+                    window.requestAnimationFrame(checkLayout);
                     return;
                 }
 
@@ -235,7 +239,7 @@ export default class IntegratedUnitStateManager extends Component {
                 resolve();
             };
 
-            requestAnimationFrame(checkLayout);
+            window.requestAnimationFrame(checkLayout);
         });
     }
 

@@ -1,8 +1,8 @@
-import { EventPath } from './types/interfaces';
 
-export function createEventsWrapper(obj: any, path: string[] = []): any {
+
+export function createEventsWrapper(obj: unknown, path: string[] = []): unknown {
     return new Proxy(obj, {
-        get(target: any, key: string) {
+        get(target: Record<string, unknown>, key: string) {
             if (key === '$path') {
                 return `settings.${path.join('.')}`;
             }
@@ -29,7 +29,7 @@ export function createEventsWrapper(obj: any, path: string[] = []): any {
                     $children: `${pathStr}.*`,
                     toString: () => pathStr,
                     valueOf: () => pathStr,
-                } as EventPath;
+                };
             }
 
             return createEventsWrapper(value, [...path, key]);

@@ -18,7 +18,7 @@ const PopupContainer = styled.div`
     display: flex;
     flex-direction: column;
 `;
-const Popup = () => {
+const Popup = (): React.ReactElement => {
     const { popupMode, onClose, setActiveImageIndex, setImages, images } =
         usePopupContext();
     const [mode, setMode] = useState<ViewMode>('maximized');

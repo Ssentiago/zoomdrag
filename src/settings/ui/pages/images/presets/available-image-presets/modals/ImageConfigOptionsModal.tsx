@@ -52,33 +52,37 @@ export const ImageConfigOptionsModal: FC<UnitOptionsProps> = ({
                     <input
                         type={'checkbox'}
                         defaultChecked={on}
-                        onChange={async (event) => {
-                            const value = event.target.checked;
-                            const oldUnits = JSON.parse(JSON.stringify(units));
-                            plugin.settings.$.units.configs[unitIndex].panels[
-                                panel
-                            ].on = value;
-                            await plugin.settings.save();
-                            const state = value
-                                ? t.settings.pages.images.presets
-                                      .availableImageConfigs.optionsModal.panels
-                                      .states.on
-                                : t.settings.pages.images.presets
-                                      .availableImageConfigs.optionsModal.panels
-                                      .states.off;
-                            onChanges(
-                                oldUnits,
-                                tf(
-                                    t.settings.pages.images.presets
-                                        .availableImageConfigs.optionsModal
-                                        .panels.action,
-                                    {
-                                        state: state,
-                                        panel: panel,
-                                        name: unit.name,
-                                    }
-                                )
-                            );
+                        onChange={(event) => {
+                            void (async () => {
+                                const value = event.target.checked;
+                                const oldUnits = JSON.parse(
+                                    JSON.stringify(units)
+                                ) as typeof units;
+                                plugin.settings.$.units.configs[
+                                    unitIndex
+                                ].panels[panel].on = value;
+                                await plugin.settings.save();
+                                const state = value
+                                    ? t.settings.pages.images.presets
+                                          .availableImageConfigs.optionsModal
+                                          .panels.states.on
+                                    : t.settings.pages.images.presets
+                                          .availableImageConfigs.optionsModal
+                                          .panels.states.off;
+                                onChanges(
+                                    oldUnits,
+                                    tf(
+                                        t.settings.pages.images.presets
+                                            .availableImageConfigs.optionsModal
+                                            .panels.action,
+                                        {
+                                            state,
+                                            panel,
+                                            name: unit.name,
+                                        }
+                                    )
+                                );
+                            })();
                         }}
                     />
                 </OSetting>

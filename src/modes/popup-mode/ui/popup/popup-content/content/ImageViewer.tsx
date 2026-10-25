@@ -1,11 +1,10 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC } from 'react';
 
 interface ImageWrapperProps {
     img: HTMLImageElement | SVGElement;
 }
 
-const ImageViewer: FC<ImageWrapperProps> = ({ img }) => {
-    return (
+const ImageViewer: FC<ImageWrapperProps> = ({ img }) => (
         <>
             {img instanceof HTMLImageElement && (
                 <img
@@ -15,6 +14,5 @@ const ImageViewer: FC<ImageWrapperProps> = ({ img }) => {
             )}
         </>
     );
-};
 
 export default ImageViewer;

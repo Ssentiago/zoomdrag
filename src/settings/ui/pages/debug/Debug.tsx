@@ -39,7 +39,7 @@ const Debug: FC = () => {
         const logs = plugin.logger.exportLogs();
         const blob = new Blob([logs], { type: 'text/plain' });
         const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
+        const link = createEl('a');
         link.href = url;
         link.download = 'izd-logs.txt';
         link.click();
@@ -98,7 +98,7 @@ const Debug: FC = () => {
                     aria-label={
                         t.settings.pages.debug.reportIssue.linkButtonTooltip
                     }
-                    onClick={handleLinkButtonClick}
+                    onClick={() => void handleLinkButtonClick()}
                     data-icon={'bug'}
                 />
             </OSetting>
@@ -110,10 +110,12 @@ const Debug: FC = () => {
                 <input
                     type='checkbox'
                     defaultChecked={plugin.settings.$.debug.enabled}
-                    onChange={async (e) => {
-                        plugin.settings.$.debug.enabled =
-                            e.currentTarget.checked;
-                        await plugin.settings.save();
+                    onChange={(e) => {
+                        void (async () => {
+                            plugin.settings.$.debug.enabled =
+                                e.currentTarget.checked;
+                            await plugin.settings.save();
+                        })();
                     }}
                 />
             </OSetting>
@@ -124,10 +126,12 @@ const Debug: FC = () => {
             >
                 <select
                     value={plugin.settings.$.debug.level}
-                    onChange={async (e) => {
-                        plugin.settings.$.debug.level = e.target
-                            .value as DebugLevel;
-                        await plugin.settings.save();
+                    onChange={(e) => {
+                        void (async () => {
+                            plugin.settings.$.debug.level = e.target
+                                .value as DebugLevel;
+                            await plugin.settings.save();
+                        })();
                     }}
                 >
                     <option value='none'>None</option>
@@ -158,7 +162,7 @@ const Debug: FC = () => {
                     aria-label={
                         t.settings.pages.debug.copyLogs.copyButtonTooltip
                     }
-                    onClick={copyLogs}
+                    onClick={() => void copyLogs()}
                     data-icon={'clipboard'}
                 />
             </OSetting>
@@ -175,7 +179,7 @@ const Debug: FC = () => {
                         t.settings.pages.debug.clearLogsStorage
                             .clearButtonTooltip
                     }
-                    onClick={clearLogs}
+                    onClick={() => void clearLogs()}
                     data-icon={'trash'}
                 />
             </OSetting>

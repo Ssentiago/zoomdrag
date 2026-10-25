@@ -107,7 +107,7 @@ const ButtonLayoutModal: React.FC<ButtonManagementModalProps> = ({
                 },
             ],
         };
-    }, [plugin]);
+    }, [plugin, reload]);
 
     const panelNames = {
         zoom: t.image.controlPanel.zoom.name,
@@ -163,16 +163,18 @@ const ButtonLayoutModal: React.FC<ButtonManagementModalProps> = ({
     };
 
     useEffect(() => {
-        const handler = async (payload: any) => {
-            if (isApplyingPreset.current) {
-                return;
-            }
+        const handler = () => {
+            void (async () => {
+                if (isApplyingPreset.current) {
+                    return;
+                }
 
-            plugin.settings.$.panels.local.preset = 'none';
+                plugin.settings.$.panels.local.preset = 'none';
 
-            await plugin.settings.save();
+                await plugin.settings.save();
 
-            setReload((prev) => !prev);
+                setReload((prev) => !prev);
+            })();
         };
 
         plugin.settings.emitter.on(
@@ -221,7 +223,7 @@ const ButtonLayoutModal: React.FC<ButtonManagementModalProps> = ({
                             ? 'button-active'
                             : ''
                     }
-                    onClick={() => applyPreset('minimal')}
+                    onClick={() => void applyPreset('minimal')}
                 >
                     {
                         t.settings.pages.images.layout.buttonsLayout.modal
@@ -235,7 +237,7 @@ const ButtonLayoutModal: React.FC<ButtonManagementModalProps> = ({
                             ? 'button-active'
                             : ''
                     }
-                    onClick={() => applyPreset('full')}
+                    onClick={() => void applyPreset('full')}
                 >
                     {
                         t.settings.pages.images.layout.buttonsLayout.modal
@@ -249,7 +251,7 @@ const ButtonLayoutModal: React.FC<ButtonManagementModalProps> = ({
                             ? 'button-active'
                             : ''
                     }
-                    onClick={() => applyPreset('presentation')}
+                    onClick={() => void applyPreset('presentation')}
                 >
                     {
                         t.settings.pages.images.layout.buttonsLayout.modal
@@ -278,7 +280,7 @@ const ButtonLayoutModal: React.FC<ButtonManagementModalProps> = ({
                                 <input
                                     type={'checkbox'}
                                     checked={getValue()}
-                                    onChange={async (e) => {
+                                    onChange={(e) => {
                                         setValue(e.target.checked);
                                     }}
                                 />

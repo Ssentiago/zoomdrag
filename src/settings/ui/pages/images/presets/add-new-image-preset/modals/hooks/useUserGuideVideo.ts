@@ -4,7 +4,10 @@ import { normalizePath, requestUrl } from 'obsidian';
 
 import { useSettingsContext } from '../../../../../../core/SettingsContext';
 
-export const useUserGuideVideo = () => {
+export const useUserGuideVideo = (): {
+    isLoading: boolean;
+    videoUrl: string;
+} => {
     const { plugin } = useSettingsContext();
 
     const pluginPath = useMemo(() => plugin.manifest.dir, [plugin]);
@@ -30,7 +33,7 @@ export const useUserGuideVideo = () => {
             );
 
             return true;
-        } catch (err: any) {
+        } catch (err: unknown) {
             plugin.logger.error(`Error downloading video: ${err.message}`);
             return false;
         }
@@ -88,7 +91,7 @@ export const useUserGuideVideo = () => {
             }
         };
 
-        fetchVideo();
+        void fetchVideo();
     }, [videoPath]);
 
     return { isLoading, videoUrl };

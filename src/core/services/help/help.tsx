@@ -30,7 +30,7 @@ export default class Help extends Component {
     showModal(mode: 'full' | 'minimal'): void {
         this.closeModal();
 
-        this.rootDiv ??= document.createElement('div');
+        this.rootDiv ??= createDiv();
         this.root = createRoot(this.rootDiv);
 
         this.root.render(

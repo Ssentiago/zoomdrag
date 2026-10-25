@@ -1,11 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { usePaginationProps } from './types/interfaces';
+import {
+    usePaginationProps,
+    UsePaginationReturn,
+} from './types/interfaces';
 
 export const usePagination = ({
     itemsPerPage,
     totalItems,
-}: usePaginationProps) => {
+}: usePaginationProps): UsePaginationReturn => {
     const [page, setPage] = useState(1);
     const [delta, setDelta] = useState(0);
     const totalPages = useMemo(

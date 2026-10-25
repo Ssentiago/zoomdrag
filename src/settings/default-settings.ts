@@ -126,5 +126,5 @@ export function defaultSettings(): DefaultSettings {
             enabled: false,
             level: DebugLevel.None,
         },
-    } as DefaultSettings;
+    };
 }

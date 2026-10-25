@@ -2,7 +2,7 @@ import { defaultSettings } from '@/settings/default-settings';
 import { deepMerge } from '@/utils/object-utils';
 
 import EventEmitter2 from 'eventemitter2';
-import { Component, normalizePath } from 'obsidian';
+import { Component, debounce, normalizePath } from 'obsidian';
 
 import IzdPlugin from '../core/izd-plugin';
 import { createEventsWrapper } from './proxy/events-wrapper';
@@ -18,8 +18,8 @@ export default class Settings extends Component {
     $$!: EventsWrapper<DefaultSettings>;
 
     private savePromise?: Promise<void> | undefined;
-    private saveTimeout?: NodeJS.Timeout | undefined;
     private saveResolve?: (() => void) | undefined;
+    private readonly debouncedSave: () => void;
 
     constructor(public readonly plugin: IzdPlugin) {
         super();
@@ -27,13 +27,19 @@ export default class Settings extends Component {
             wildcard: true,
             delimiter: '.',
         });
+        this.debouncedSave = debounce(
+            () => this.performSave(),
+            50,
+            true
+        );
         this.setupEvents();
     }
 
-    get $() {
+    get $(): DefaultSettings {
         return this.data;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises -- must be awaitable by callers (izd-plugin.onload, reset)
     async load(): Promise<void> {
         const userSettings = (await this.plugin.loadData()) ?? {};
         const settings = deepMerge(defaultSettings(), userSettings);
@@ -45,32 +51,28 @@ export default class Settings extends Component {
         this.$$ = createEventsWrapper(settings);
     }
 
-    async save(): Promise<void> {
-        if (this.saveTimeout) {
-            clearTimeout(this.saveTimeout);
-        }
-
+    save(): Promise<void> {
         this.savePromise ??= new Promise((resolve) => {
             this.saveResolve = resolve;
         });
-
-        this.saveTimeout = setTimeout(async () => {
-            try {
-                await this.plugin.saveData(this.$);
-                this.dirty = false;
-            } catch (err: any) {
-                this.plugin.logger.error(
-                    `Settings save failed: ${err.message}`
-                );
-            } finally {
-                this.savePromise = undefined;
-                this.saveResolve?.();
-                this.saveResolve = undefined;
-                this.saveTimeout = undefined;
-            }
-        }, 50);
-
+        this.debouncedSave();
         return this.savePromise;
+    }
+
+    private async performSave(): Promise<void> {
+        try {
+            await this.plugin.saveData(this.$);
+            this.dirty = false;
+        } catch (err: unknown) {
+            this.plugin.logger.error(
+                `Settings save failed: ${err instanceof Error ? err.message : String(err)}`
+            );
+        } finally {
+            const resolve = this.saveResolve;
+            this.savePromise = undefined;
+            this.saveResolve = undefined;
+            resolve?.();
+        }
     }
 
     async reset(): Promise<void> {
@@ -91,22 +93,14 @@ export default class Settings extends Component {
         this.emitter.on('**', () => (this.dirty = true));
     }
 
-    async onunload(): Promise<void> {
+    onunload(): void {
         super.onunload();
         this.emitter.removeAllListeners();
 
-        if (this.saveTimeout) {
-            clearTimeout(this.saveTimeout);
-            this.saveTimeout = undefined;
-        }
-
-        if (this.dirty && this.savePromise) {
-            await this.savePromise;
-        } else if (this.dirty) {
-            await this.plugin.saveData(this.$);
-            this.dirty = false;
-        }
-
-        this.savePromise = undefined;
+        void (async () => {
+            if (this.dirty) {
+                await this.performSave();
+            }
+        })();
     }
 }

@@ -56,7 +56,7 @@ const AvailableImagePresets: FC = () => {
     } = useUnitsHistoryContext();
 
     useEffect(() => {
-        const handler = async () => {
+        const handler = () => {
             setUnitsPerPage(plugin.settings.$.units.settingsPagination.perPage);
         };
 
@@ -72,11 +72,9 @@ const AvailableImagePresets: FC = () => {
         };
     }, [plugin]);
 
-    const visibleDUnits = useMemo(() => {
-        return units.slice(pageStartIndex, pageEndIndex);
-    }, [units, pageStartIndex, pageEndIndex]);
+    const visibleDUnits = useMemo(() => units.slice(pageStartIndex, pageEndIndex), [units, pageStartIndex, pageEndIndex]);
 
-    const getPageChangeButtonLabel = (type: 'previous' | 'next') => {
+    const getPageChangeButtonLabel = (type: 'previous' | 'next'): string => {
         const canChange = type === 'next' ? page < totalPages : page > 1;
 
         if (modeState.mode === 'edit' && canChange) {
@@ -97,6 +95,8 @@ const AvailableImagePresets: FC = () => {
                           .pagination.buttons.next.enabled
                     : t.settings.pages.images.presets.availableImageConfigs
                           .pagination.buttons.next.disabled;
+            default:
+                return '';
         }
     };
 
@@ -120,16 +120,18 @@ const AvailableImagePresets: FC = () => {
                     min={1}
                     max={50}
                     step={1}
-                    onChange={async (e) => {
-                        plugin.settings.$.units.settingsPagination.perPage =
-                            parseInt(e.target.value, 10);
-                        await plugin.settings.save();
+                    onChange={(e) => {
+                        void (async () => {
+                            plugin.settings.$.units.settingsPagination.perPage =
+                                parseInt(e.target.value, 10);
+                            await plugin.settings.save();
+                        })();
                     }}
                 />
             </OSetting>
             <ButtonContainer>
                 <UndoButton
-                    onClick={undo}
+                    onClick={() => void undo()}
                     disabled={!canUndo}
                     aria-label={getUndoLabel()}
                 >
@@ -162,7 +164,7 @@ const AvailableImagePresets: FC = () => {
 
                 <RedoButton
                     disabled={!canRedo}
-                    onClick={redo}
+                    onClick={() => void redo()}
                     aria-label={getRedoLabel()}
                 >
                     <RotateCw size={'20px'} />

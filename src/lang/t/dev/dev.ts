@@ -11,7 +11,7 @@ export const locales: Record<string, LocaleSchema> = {
 };
 
 export function initLocale(): LocaleSchema | PartialLocale {
-    const localeKey = moment.locale() as keyof typeof locales;
+    const localeKey = moment.locale();
     const lang = localeKey in locales ? localeKey : 'en';
 
     return locales[lang];

@@ -48,9 +48,11 @@ export class IntegratedModeContext {
         return !viewState?.source && viewState?.mode === 'source';
     }
 
-    get nativeTouchEventsEnabled() {
-        const data = this.integratedMode.state.data.get(this.leafID!);
-        if (!data) return;
+    get nativeTouchEventsEnabled(): boolean | undefined {
+        const leafID = this.leafID;
+        if (!leafID) return undefined;
+        const data = this.integratedMode.state.data.get(leafID);
+        if (!data) return undefined;
 
         return data.nativeTouchEventsEnabled;
     }
@@ -69,7 +71,7 @@ export class IntegratedModeContext {
         this.leaf = view.leaf;
         this.view = view;
 
-        onInitialize(this.leafID!);
+        onInitialize(this.leaf.id as LeafID);
     }
 
     /**
@@ -80,17 +82,19 @@ export class IntegratedModeContext {
             return;
         }
 
+        const leafID = this.leaf.id as LeafID;
         const isLeafAlive =
-            this.integratedMode.plugin.app.workspace.getLeafById(this.leafID!);
+            this.integratedMode.plugin.app.workspace.getLeafById(leafID);
         if (isLeafAlive === null) {
-            onCleanup(this.leafID!);
+            onCleanup(leafID);
             this.view = undefined;
             this.leaf = undefined;
         }
     }
 
     getAvailableSize(): { width: number; height: number } {
-        if (!this.active) {
+        const view = this.view;
+        if (!this.active || !view) {
             return { width: 0, height: 0 };
         }
 
@@ -98,7 +102,7 @@ export class IntegratedModeContext {
             ? '.markdown-preview-view'
             : '.markdown-source-view';
 
-        const container = this.view!.contentEl.querySelector(selector);
+        const container = view.contentEl.querySelector(selector);
         if (!container) {
             return { width: 0, height: 0 };
         }
@@ -107,7 +111,7 @@ export class IntegratedModeContext {
             '.markdown-preview-sizer, .cm-sizer'
         );
         const marginLeft = sizer
-            ? parseInt(window.getComputedStyle(sizer).marginLeft) || 0
+            ? parseInt(window.getComputedStyle(sizer).marginLeft, 10) || 0
             : 0;
 
         return {

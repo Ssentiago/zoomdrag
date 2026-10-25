@@ -10,7 +10,7 @@ import { isInsideMarkdownDOM, isThisSvgIcon } from '@/utils/dom-utils';
 import { Component } from 'obsidian';
 
 export default class PickerMode extends Component {
-    private isActive: boolean = false;
+    private isActive = false;
     private tooltip: HTMLDivElement | null = null;
     private currentElement: null | Element = null;
     private ribbonButton!: HTMLElement;
@@ -52,7 +52,7 @@ export default class PickerMode extends Component {
         this.plugin.addCommand({
             id: 'toggle-picker-mode',
             name: 'Toggle picker mode',
-            checkCallback: (checking) => {
+            checkCallback: (checking): boolean | undefined => {
                 if (checking) {
                     return this.plugin.settings.$.units.interactivity.picker
                         .enabled;
@@ -64,7 +64,7 @@ export default class PickerMode extends Component {
                     this.plugin.showNotice(
                         t.commands.pickerMode.notice.disabled
                     );
-                    return;
+                    return undefined;
                 }
 
                 this.toggle();
@@ -82,7 +82,7 @@ export default class PickerMode extends Component {
         );
     }
 
-    private readonly toggle = (evt?: MouseEvent) => {
+    private readonly toggle = (_evt?: MouseEvent) => {
         if (this.isActive) {
             this.deactivate();
         } else {
@@ -91,7 +91,7 @@ export default class PickerMode extends Component {
     };
 
     private createTooltip(): void {
-        this.tooltip = document.createElement('div');
+        this.tooltip = createDiv();
         this.tooltip.addClass('picker-mode-tooltip');
         document.body.appendChild(this.tooltip);
     }
@@ -205,7 +205,7 @@ export default class PickerMode extends Component {
     private readonly onMouseOver = (e: MouseEvent) => {
         const target = e.target as Element;
         const element =
-            target.closest('.cm-preview-code-block') ||
+            target.closest('.cm-preview-code-block') ??
             target.closest('svg,img,.izd-container');
 
         if (!element) return;
@@ -225,7 +225,7 @@ export default class PickerMode extends Component {
     private readonly onMouseOut = (e: MouseEvent) => {
         const target = e.target as Element;
         const element =
-            target.closest('.cm-preview-code-block') ||
+            target.closest('.cm-preview-code-block') ??
             target.closest('svg,img,.izd-container');
 
         if (element === this.currentElement) {
@@ -239,51 +239,58 @@ export default class PickerMode extends Component {
         }
     };
 
-    private readonly onMouseDown = async (event: MouseEvent) => {
-        if (!(event.target instanceof Element)) return;
+    private readonly onMouseDown = (event: MouseEvent): void => {
+        void (async () => {
+            if (!(event.target instanceof Element)) return;
 
-        event.stopPropagation();
-        event.preventDefault();
+            event.stopPropagation();
+            event.preventDefault();
 
-        let element =
-            event.target.closest('.cm-preview-code-block') ||
-            event.target.closest('svg,img,.izd-container');
-        if (!element) {
-            this.deactivate();
-            return;
-        }
+            let element =
+                event.target.closest('.cm-preview-code-block') ??
+                event.target.closest('svg,img,.izd-container');
+            if (!element) {
+                this.deactivate();
+                return;
+            }
 
-        element = element?.matches('svg,img')
-            ? element
-            : element?.querySelector('svg,img');
+            element = element.matches('svg,img')
+                ? element
+                : element.querySelector('svg,img');
 
-        const interactive = element as HTMLImageElement | SVGElement;
+            const interactive = element as HTMLImageElement | SVGElement;
 
-        if (event.altKey) {
-            await this.plugin.popupMode.showPopup(interactive);
-            this.deactivate();
-            return;
-        }
+            if (event.altKey) {
+                await this.plugin.popupMode.showPopup(interactive);
+                this.deactivate();
+                return;
+            }
 
-        const canUseIntegratedMode = isInsideMarkdownDOM(interactive);
+            const canUseIntegratedMode = isInsideMarkdownDOM(interactive);
 
-        if (!canUseIntegratedMode) {
-            return;
-        }
+            if (!canUseIntegratedMode) {
+                return;
+            }
 
-        const wasAlreadyInitialized =
-            interactive.dataset.interactiveInitializationStatus ===
-            InteractiveInitialization.Initialized;
+            const wasAlreadyInitialized =
+                interactive.dataset.interactiveInitializationStatus ===
+                InteractiveInitialization.Initialized;
 
-        if (wasAlreadyInitialized) {
-            this.plugin.emitter.emit('toggle-integrated-element', { element });
+            if (wasAlreadyInitialized) {
+                this.plugin.emitter.emit('toggle-integrated-element', {
+                    element,
+                });
+                this.showTooltip(interactive);
+                return;
+            }
+
+            this.plugin.emitter.emit(
+                'create-integrated-element',
+                interactive
+            );
+
             this.showTooltip(interactive);
-            return;
-        }
-
-        this.plugin.emitter.emit('create-integrated-element', interactive);
-
-        this.showTooltip(interactive);
+        })();
     };
 
     onunload(): void {

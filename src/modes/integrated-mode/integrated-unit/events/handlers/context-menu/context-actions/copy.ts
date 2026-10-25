@@ -56,8 +56,16 @@ export class Copy extends Component {
         }
 
         // desktop — electron
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- runtime check for Electron environment
         if (electron) {
-            const { clipboard, nativeImage } = electron;
+            const { clipboard, nativeImage } = electron as {
+                clipboard: {
+                    writeImage: (img: unknown) => void;
+                };
+                nativeImage: {
+                    createFromBuffer: (buf: Buffer) => unknown;
+                };
+            };
             const arrayBuffer = await blob.arrayBuffer();
             const buffer = Buffer.from(arrayBuffer);
             const image = nativeImage.createFromBuffer(buffer);

@@ -25,10 +25,12 @@ const Exclusions: FC = (): React.ReactElement => {
                 <textarea
                     defaultValue={plugin.settings.$.units.exclusions.patterns}
                     rows={6}
-                    onChange={async (e) => {
-                        plugin.settings.$.units.exclusions.patterns =
-                            e.target.value;
-                        await plugin.settings.save();
+                    onChange={(e) => {
+                        void (async () => {
+                            plugin.settings.$.units.exclusions.patterns =
+                                e.target.value;
+                            await plugin.settings.save();
+                        })();
                     }}
                 />
             </OSetting>

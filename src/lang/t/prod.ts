@@ -18,10 +18,8 @@ export function initLocale(): LocaleSchema | PartialLocale {
 
 const currentLocale: LocaleSchema | PartialLocale = initLocale();
 
-export function t(key: string) {
-    return (
-        currentLocale[key as keyof typeof currentLocale] ??
-        en[key as keyof typeof en] ??
-        `[missing: ${key}]`
-    );
+export function t(key: string): unknown {
+    const current = currentLocale as Record<string, unknown>;
+    const fallback = en as unknown as Record<string, unknown>;
+    return current[key] ?? fallback[key] ?? `[missing: ${key}]`;
 }

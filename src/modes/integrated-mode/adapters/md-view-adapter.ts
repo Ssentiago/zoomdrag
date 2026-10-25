@@ -16,7 +16,7 @@ export class MdViewAdapter extends BaseAdapter {
         super(integratedMode, fileStat);
     }
 
-    initialize = async (elementCtx: BaseUnitContext) => {
+    initialize = async (elementCtx: BaseUnitContext): Promise<void> => {
         const interactiveCtx = this.matchInteractiveElement(elementCtx.element);
         if (!interactiveCtx) {
             return;

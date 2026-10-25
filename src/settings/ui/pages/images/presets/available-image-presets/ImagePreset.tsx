@@ -15,8 +15,8 @@ export const ImagePreset: FC<UnitItemProps> = ({
     modeState,
     setModeState,
 }) => {
-    const [name, setName] = useState(unit.name);
-    const [selector, setSelector] = useState(unit.selector);
+    const [name] = useState(unit.name);
+    const [selector] = useState(unit.selector);
 
     const [nameError, setNameError] = useState('');
     const [selectorError, setSelectorError] = useState('');
@@ -31,7 +31,11 @@ export const ImagePreset: FC<UnitItemProps> = ({
             e.preventDefault();
             const result = await handleSaveEditing(index);
             if (result) {
-                const { validationResult, validated } = result;
+                const validationResult = result.validationResult as {
+                    nameResult: { tooltip: string };
+                    selectorResult: { tooltip: string };
+                };
+                const { validated } = result;
 
                 setNameError(validationResult.nameResult.tooltip);
                 setSelectorError(validationResult.selectorResult.tooltip);
@@ -58,7 +62,7 @@ export const ImagePreset: FC<UnitItemProps> = ({
                     const validationResult = validateName(value, unit);
                     setNameError(validationResult.tooltip);
                 }}
-                onKeyDown={onKeyDown}
+                onKeyDown={(e) => void onKeyDown(e)}
             />
             <input
                 id='editing-selector-input'
@@ -71,7 +75,7 @@ export const ImagePreset: FC<UnitItemProps> = ({
                     const validationResult = validateSelector(value, unit);
                     setSelectorError(validationResult.tooltip);
                 }}
-                onKeyDown={onKeyDown}
+                onKeyDown={(e) => void onKeyDown(e)}
             />
             <button
                 aria-label={
@@ -92,26 +96,33 @@ export const ImagePreset: FC<UnitItemProps> = ({
                         .buttons.save,
                     { name: unit.name }
                 )}
-                onClick={async () => {
-                    const result = await handleSaveEditing(index);
-                    if (result) {
-                        const { validationResult, validated } = result;
-                        setNameError(validationResult.nameResult.tooltip);
-                        setSelectorError(
-                            validationResult.selectorResult.tooltip
-                        );
-                        if (validated) {
+                onClick={() => {
+                    void (async () => {
+                        const result = await handleSaveEditing(index);
+                        if (result) {
+                            const validationResult =
+                                result.validationResult as {
+                                    nameResult: { tooltip: string };
+                                    selectorResult: { tooltip: string };
+                                };
+                            const { validated } = result;
+                            setNameError(validationResult.nameResult.tooltip);
+                            setSelectorError(
+                                validationResult.selectorResult.tooltip
+                            );
+                            if (validated) {
+                                setModeState({
+                                    index: -1,
+                                    mode: 'none',
+                                });
+                            }
+                        } else {
                             setModeState({
                                 index: -1,
                                 mode: 'none',
                             });
                         }
-                    } else {
-                        setModeState({
-                            index: -1,
-                            mode: 'none',
-                        });
-                    }
+                    })();
                 }}
                 data-icon={'save'}
             />
@@ -141,8 +152,10 @@ export const ImagePreset: FC<UnitItemProps> = ({
                               }
                           )
                 }
-                onChange={async (e) => {
-                    await handleToggle(index, e.target.checked);
+                onChange={(e) => {
+                    void (async () => {
+                        await handleToggle(index, e.target.checked);
+                    })();
                 }}
             />
 
@@ -158,7 +171,7 @@ export const ImagePreset: FC<UnitItemProps> = ({
                                 name: unit.name,
                             }
                         )}
-                        onClick={async () => {
+                        onClick={() => {
                             setModeState({
                                 index,
                                 mode: 'edit',
@@ -175,8 +188,10 @@ export const ImagePreset: FC<UnitItemProps> = ({
                                 name: unit.name,
                             }
                         )}
-                        onClick={async () => {
-                            await handleDelete(index);
+                        onClick={() => {
+                            void (async () => {
+                                await handleDelete(index);
+                            })();
                         }}
                         data-icon={'trash'}
                     />

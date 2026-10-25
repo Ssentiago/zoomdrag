@@ -1,9 +1,9 @@
-import { Component, Menu } from 'obsidian';
+import { Component } from 'obsidian';
 
 import { ContextMenu } from '../context-menu';
 
 export default class OpenInPopup extends Component {
-    constructor(private contextMenu: ContextMenu) {
+    constructor(private readonly contextMenu: ContextMenu) {
         super();
     }
 

@@ -7,7 +7,7 @@ export class LocaleProxy<T extends object> {
     ) {}
 
     createProxy(path: string[] = []): LocaleWrapper<T> {
-        return new Proxy({} as any, {
+        return new Proxy({}, {
             get: (_, key: string) => {
                 const fullPath = [...path, key];
                 const val = this.getValue(fullPath, this.currentLocale);
@@ -25,11 +25,11 @@ export class LocaleProxy<T extends object> {
         });
     }
 
-    private getValue(path: string[], locale: any): any {
+    private getValue(path: string[], locale: unknown): unknown {
         return path.reduce((acc, key) => acc?.[key], locale);
     }
 
-    private isEmpty(val: any): boolean {
+    private isEmpty(val: unknown): boolean {
         return (
             val === undefined ||
             val === null ||
@@ -38,11 +38,11 @@ export class LocaleProxy<T extends object> {
         );
     }
 
-    private isObject(val: any): boolean {
+    private isObject(val: unknown): boolean {
         return val !== null && typeof val === 'object' && !Array.isArray(val);
     }
 
-    private handleMissing(path: string[]): any {
+    private handleMissing(path: string[]): unknown {
         const fallbackVal = this.getValue(path, this.fallbackLocale);
 
         if (!this.isEmpty(fallbackVal)) {

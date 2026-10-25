@@ -18,7 +18,7 @@ import useDragDrop from './hooks/useDragDrop';
 
 const PanelLayout: FC = () => {
     const { plugin } = useSettingsContext();
-    const [panels, setPanels] = useState(plugin.settings.$.panels.local.panels);
+    const [panels] = useState(plugin.settings.$.panels.local.panels);
 
     const panelNames = useMemo(
         () => ({
@@ -34,12 +34,12 @@ const PanelLayout: FC = () => {
     const unitPreviewRef = React.useRef<HTMLDivElement>(null);
 
     const { draggedPanel, props } = useDragDrop({
-        unitPreviewRef: unitPreviewRef,
+        unitPreviewRef,
         panels,
     });
 
     useEffect(() => {
-        const handler = (p: any) => {
+        const handler = () => {
             setUpdateTrigger((prev) => !prev);
         };
 
@@ -97,7 +97,9 @@ const PanelLayout: FC = () => {
                                 type='checkbox'
                                 checked={config.on}
                                 onChange={() =>
-                                    togglePanelState(name as keyof PanelsConfig)
+                                    void togglePanelState(
+                                        name as keyof PanelsConfig
+                                    )
                                 }
                             />
                         </OSetting>

@@ -3,16 +3,17 @@ import { ImageConfig } from '@/settings/types/interfaces';
 import {
     GlobalValidationResult,
     UnitValidationResult,
+    UseUnitsValidationReturn,
 } from '@/settings/ui/pages/images/presets/hooks/types/interfaces';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useSettingsContext } from '../../../../core/SettingsContext';
 import { useUnitsManagerContext } from '../context/UnitsManagerContext';
 
 // const unitRegexp = /^[\w-]+$/;
 
-export const useUnitsValidation = () => {
+export const useUnitsValidation = (): UseUnitsValidationReturn => {
     const { plugin } = useSettingsContext();
     const { units } = useUnitsManagerContext();
     const [unitNamesIndex, setUnitNamesIndex] = useState(new Set());
@@ -33,7 +34,7 @@ export const useUnitsValidation = () => {
 
     useEffect(() => {
         updateUnitNameAndSelectors(plugin.settings.$.units.configs);
-        const handler = (payload: any) => {
+        const handler = () => {
             updateUnitNameAndSelectors(units);
         };
 
@@ -54,7 +55,7 @@ export const useUnitsValidation = () => {
         try {
             document.querySelector(selector);
             return { valid: true, err: undefined };
-        } catch (err: any) {
+        } catch (err: unknown) {
             const parts = (err.message as string).split(':');
             const message = parts.slice(1).join(':').trim();
             return { valid: false, err: message };
@@ -81,7 +82,7 @@ export const useUnitsValidation = () => {
         //     };
         // }
 
-        if (unitNamesIndex.has(name) && (!exclude || exclude.name !== name)) {
+        if (unitNamesIndex.has(name) && exclude?.name !== name) {
             return {
                 valid: false,
                 tooltip:
@@ -121,7 +122,7 @@ export const useUnitsValidation = () => {
 
         if (
             unitSelectorsIndex.has(selector) &&
-            (!exclude || exclude.selector !== selector)
+            exclude?.selector !== selector
         ) {
             return {
                 valid: false,

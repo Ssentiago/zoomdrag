@@ -50,7 +50,7 @@ export class Keyboard extends Component implements Handler {
         };
 
         const ctrlAltKeys = {
-            KeyF: async () => await actions.toggleFullscreen(),
+            KeyF: () => actions.toggleFullscreen(),
         };
 
         let handler = null;

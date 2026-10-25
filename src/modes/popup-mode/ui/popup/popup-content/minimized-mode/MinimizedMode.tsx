@@ -30,7 +30,7 @@ export const MinimizedMode: FC<{
     });
 
     useEffect(() => {
-        if (!isDragging) return;
+        if (!isDragging) return undefined;
 
         document.addEventListener('mousemove', dragHandlers.onMouseMove);
         document.addEventListener('mouseup', dragHandlers.onMouseUp);

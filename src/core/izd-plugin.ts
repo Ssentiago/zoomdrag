@@ -29,17 +29,19 @@ export default class IzdPlugin extends Plugin {
     userState!: UserState;
     help!: Help;
 
-    async onload(): Promise<void> {
-        if (process.env.NODE_ENV === 'development') {
-            (window as any).plugin = this;
-        }
+    onload(): void {
+        void (async () => {
+            if (process.env.NODE_ENV === 'development') {
+                (window as unknown).plugin = this;
+            }
 
-        await this.initialize();
+            await this.initialize();
 
-        this.logger.info('Plugin loaded successfully');
+            this.logger.info('Plugin loaded successfully');
+        })();
     }
 
-    async onunload(): Promise<void> {
+    onunload(): void {
         super.onunload();
 
         this.emitter.removeAllListeners();
@@ -135,6 +137,6 @@ export default class IzdPlugin extends Plugin {
         duration?: number
     ): void {
         this.showNotice(message, duration);
-        this.noticeEl?.addEventListener('click', callback, { once: true });
+        this.noticeEl?.addEventListener('click', () => void callback(), { once: true });
     }
 }

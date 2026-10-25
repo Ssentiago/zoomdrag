@@ -1,8 +1,6 @@
 export function isInsideMarkdownDOM(element: Element): boolean {
-    const leafContent = element.closest(
-        '.workspace-leaf-content'
-    ) as HTMLElement;
-    return leafContent?.dataset.type === 'markdown';
+    const leafContent = element.closest('.workspace-leaf-content');
+    return leafContent?.getAttribute('data-type') === 'markdown';
 }
 
 /**
@@ -16,7 +14,7 @@ export function isInsideMarkdownDOM(element: Element): boolean {
  */
 export function isThisSvgIcon(element: Element): boolean {
     // Fast verification - not svg at all
-    if (!(element instanceof SVGElement)) {
+    if (!(element.instanceOf(SVGElement))) {
         return false;
     }
 

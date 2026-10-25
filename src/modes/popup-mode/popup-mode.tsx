@@ -9,7 +9,7 @@ import { createRoot, Root } from 'react-dom/client';
 export default class PopupMode extends Component {
     popupDiv: HTMLDivElement | null = null;
     popupRoot: Root | null = null;
-    imgConverter!: ImageConverter;
+    imgConverter: ImageConverter;
     objectUrls: string[];
 
     constructor(readonly plugin: IzdPlugin) {
@@ -57,20 +57,25 @@ export default class PopupMode extends Component {
         const component = new Component();
         component.load();
 
-        const el = document.createElement('div');
+        const el = createDiv();
         el.style.visibility = 'hidden';
         document.body.appendChild(el);
 
-        const content = await this.plugin.app.vault.cachedRead(view.file!);
+        const file = view.file;
+        if (!file) {
+            throw new Error('View has no file');
+        }
+
+        const content = await this.plugin.app.vault.cachedRead(file);
         await MarkdownRenderer.render(
             this.plugin.app,
             content,
             el,
-            view.file!.path,
+            file.path,
             component
         );
 
-        await new Promise((resolve) => requestAnimationFrame(resolve));
+        await new Promise((resolve) => window.requestAnimationFrame(resolve));
 
         const images = Array.from(el.querySelectorAll('img,svg')).filter(
             (img) => !isThisSvgIcon(img)
@@ -80,14 +85,14 @@ export default class PopupMode extends Component {
             images.map(async (img) => {
                 if (img instanceof HTMLImageElement) {
                     return img;
-                } else {
+                } 
                     const blob = await this.imgConverter.imgToBlob(img, 'png');
                     const url = URL.createObjectURL(blob);
                     const newImg = new Image();
                     newImg.src = url;
                     this.objectUrls.push(url);
                     return newImg;
-                }
+                
             })
         );
 
@@ -99,7 +104,11 @@ export default class PopupMode extends Component {
 
     async showPopupForViewImages(): Promise<void> {
         const view =
-            this.plugin.app.workspace.getActiveViewOfType(MarkdownView)!;
+            this.plugin.app.workspace.getActiveViewOfType(MarkdownView);
+        if (!view) {
+            this.plugin.showNotice('No active Markdown view found.');
+            return;
+        }
 
         const images = await this.getAllImagesForPopup(view);
         if (images.length === 0) {
@@ -131,7 +140,7 @@ export default class PopupMode extends Component {
             | Array<HTMLImageElement | SVGElement>
     ): Promise<void> {
         const images = Array.isArray(image) ? image : [image];
-        console.log(images);
+        this.plugin.logger.debug('showPopup', { count: images.length });
         this.popupDiv ??= document.body.createDiv();
         if (!this.popupRoot) {
             this.popupRoot = createRoot(this.popupDiv);

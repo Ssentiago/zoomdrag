@@ -9,14 +9,12 @@ export interface HelpRootProps {
     onClose: () => void;
 }
 
-const HelpRoot: FC<HelpRootProps> = ({ mode, onClose, help }) => {
-    return (
+const HelpRoot: FC<HelpRootProps> = ({ mode, onClose, help }) => (
         <HelpContent
             help={help}
             mode={mode}
             onClose={onClose}
         />
     );
-};
 
 export default HelpRoot;
