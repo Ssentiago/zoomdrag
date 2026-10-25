@@ -2,7 +2,7 @@
   "id": "diagram-zoom-drag",
   "name": "Zoomdrag",
   "version": "6.3.1",
-  "minAppVersion": "0.9.12",
+  "minAppVersion": "1.14.5",
   "description": "Make any image or diagram interactive with zoom, drag, and control panels",
   "author": "ChenPengyuan(gitcpy) & Ssentiago",
   "isDesktopOnly": false
