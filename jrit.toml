@@ -1,0 +1,22 @@
+[project]
+name = "zoomdrag"
+repo = "Ssentiago/image-zoom-drag"
+branches = ["main", "master"]
+
+changelog_type = "conventional"
+changelog = "CHANGELOG.md"
+
+release_mode = "local"
+
+[[components]]
+name = "zoomdrag"
+path = "."
+build = "bun run build"
+artifact = "./dist"
+zip = false
+
+[[components.version_files]]
+file = "manifest.json"
+
+[[components.version_files]]
+file = "package.json"
