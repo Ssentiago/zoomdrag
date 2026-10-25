@@ -1,7 +1,8 @@
 import fs from 'fs';
+import type { Plugin } from 'rollup';
 import * as sass from 'sass';
 
-export function buildSass() {
+export function buildSass(): Plugin {
     return {
         name: 'build-sass',
         buildStart() {

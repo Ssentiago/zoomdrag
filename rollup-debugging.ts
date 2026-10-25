@@ -6,9 +6,7 @@ async function debug() {
     console.log('Starting rollup with config:', config);
     const bundle = await rollup(config as RollupOptions);
 
-    if (config.output) {
-        await bundle.write(config.output as OutputOptions);
-    }
+    await bundle.write(config.output as OutputOptions);
 
     await bundle.close();
 }
