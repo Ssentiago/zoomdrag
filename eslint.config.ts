@@ -2,8 +2,7 @@ import { globalIgnores } from 'eslint/config';
 import globals from 'globals';
 import obsidianmd from 'eslint-plugin-obsidianmd';
 import tseslint from 'typescript-eslint';
-import reactPlugin from 'eslint-plugin-react';
-import reactHooksPlugin from 'eslint-plugin-react-hooks';
+import reactX from 'eslint-plugin-react-x';
 
 export default tseslint.config(
     globalIgnores([
@@ -24,7 +23,6 @@ export default tseslint.config(
                         'eslint.config.ts',
                         'manifest.json',
                         'babel.config.js',
-                        '.dependency-cruiser.cjs',
                         'rollup.config.ts',
                         'rollup-debugging.ts',
                         'rollup-plugins/addLoggerContext.ts',
@@ -38,6 +36,14 @@ export default tseslint.config(
             },
         },
     },
+    // В проекте JS-семейство — только babel.config.js.
+    // Он живёт в Node, ему нужен process.
+    {
+        files: ['**/*.{js,cjs,mjs}'],
+        languageOptions: {
+            globals: { ...globals.node },
+        },
+    },
     // 41 правил obsidianmd/* (recommended + locales + prefer-active-doc).
     // Включает ESLint core и type-checked правила typescript-eslint,
     // поэтому их отдельно подключать не нужно.
@@ -48,11 +54,29 @@ export default tseslint.config(
             'obsidianmd/prefer-active-doc': 'warn',
         },
     },
+    // Должно идти ПОСЛЕ obsidianmd — иначе preset переопределяет обратно на warn.
+    // TypeScript сам ловит необъявленные идентификаторы, no-undef здесь дубль.
+    {
+        files: ['**/*.{ts,tsx,mts,cts}'],
+        rules: {
+            'no-undef': 'off',
+        },
+    },
+    // console в build-скриптах и в самом логгере — это их работа, не «unnecessary logging».
+    {
+        files: [
+            'rollup-debugging.ts',
+            'rollup-plugins/**/*.ts',
+            'src/core/services/logger/**',
+        ],
+        rules: {
+            'obsidianmd/rule-custom-message': 'off',
+        },
+    },
     {
         files: ['**/*.ts', '**/*.tsx'],
         plugins: {
-            react: reactPlugin,
-            'react-hooks': reactHooksPlugin,
+            'react-x': reactX,
         },
         rules: {
             '@typescript-eslint/await-thenable': 'error',
@@ -91,14 +115,13 @@ export default tseslint.config(
             'import/no-unused-modules': 'warn',
             'no-async-promise-executor': 'error',
             'no-await-in-loop': 'warn',
-            'no-console': 'warn',
             'no-constant-binary-expression': 'error',
             'no-duplicate-imports': 'error',
             'no-else-return': 'error',
             'no-empty-function': 'warn',
             'no-extra-bind': 'error',
             'no-loop-func': 'error',
-            'no-magic-numbers': ['warn', { ignore: [0, 1, -1] }],
+            'no-magic-numbers': 'off',
             'no-prototype-builtins': 'off',
             'no-return-await': 'error',
             'no-sequences': 'error',
@@ -118,13 +141,9 @@ export default tseslint.config(
             'prefer-spread': 'error',
             'prefer-template': 'warn',
             radix: 'error',
-            'react-hooks/exhaustive-deps': 'warn',
-            'react-hooks/rules-of-hooks': 'error',
-            'react/jsx-pascal-case': 'error',
-            'react/jsx-uses-react': 'error',
-            'react/jsx-uses-vars': 'error',
-            'react/no-unused-state': 'warn',
-            'react/prop-types': 'off',
+            'react-x/exhaustive-deps': 'warn',
+            'react-x/no-unused-state': 'warn',
+            'react-x/rules-of-hooks': 'error',
             yoda: 'error',
         },
     },
