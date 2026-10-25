@@ -1,19 +1,14 @@
 import { t } from '@/lang';
+import { useSettingsContext } from '@/settings/ui/core/SettingsContext';
 
 import { FC, useCallback } from 'react';
 
-import { RotateCcw } from 'lucide-react';
-import { useLocation } from 'wouter';
-
-import { useSettingsContext } from '../../../../core/SettingsContext';
+import { OButton } from '@obsidian-lib/native-react-components';
 
 const ResetSettings: FC = () => {
-    const { plugin, forceReload, setCurrentPath } = useSettingsContext();
-
-    const [location, setLocation] = useLocation();
+    const { plugin, forceReload } = useSettingsContext();
 
     const resetAction = useCallback(async () => {
-        setCurrentPath(location);
         await plugin.settings.reset();
         plugin.settings.emitter.emit('settings-reset', {
             eventName: 'settings-reset',
@@ -22,15 +17,15 @@ const ResetSettings: FC = () => {
         });
         forceReload();
         plugin.showNotice(t.settings.toolbar.reset.notice);
-    }, [plugin, forceReload, setCurrentPath, location]);
+    }, [plugin, forceReload]);
 
     return (
-        <button
-            aria-label={t.settings.toolbar.reset.tooltip}
+        <OButton
+            variant='warning'
+            label='Reset'
+            tooltip={t.settings.toolbar.reset.tooltip}
             onClick={resetAction}
-        >
-            <RotateCcw size={18} />
-        </button>
+        />
     );
 };
 

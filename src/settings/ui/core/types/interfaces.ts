@@ -12,8 +12,6 @@ export interface SettingsContextProps {
     app: App;
     forceReload: () => void;
     reloadCount: number;
-    currentPath: string;
-    setCurrentPath: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export interface SettingProviderProps {
