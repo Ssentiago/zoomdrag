@@ -1,9 +1,8 @@
 {
     "compilerOptions": {
-        "baseUrl": ".",
         "module": "ESNext",
         "jsx": "react-jsx",
-        "target": "ES2023",
+        "target": "ES2024",
         "allowJs": false,
         "strict": true,
         "noImplicitAny": true,
@@ -14,14 +13,14 @@
         "isolatedModules": true,
         "allowSyntheticDefaultImports": true,
         "strictNullChecks": true,
-        "lib": ["DOM", "ES2023"],
+        "lib": ["DOM", "ES2024"],
         "skipLibCheck": true,
         "exactOptionalPropertyTypes": true,
         "noUncheckedIndexedAccess": false,
         "noImplicitReturns": true,
         "noFallthroughCasesInSwitch": true,
         "paths": {
-            "@/*": ["src/*"]
+            "@/*": ["./src/*"]
         }
     },
     "include": ["src/**/*.ts", "src/**/*.tsx"]
