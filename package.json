@@ -23,7 +23,7 @@
         "locale:analyze-keys": "i18n-tools analyze-keys"
     },
     "dependencies": {
-        "@obsidian-lib/native-react-components": "latest",
+        "@obsidian-lib/native-react-components": "https://github.com/Ssentiago/native-react-components/releases/download/0.1.0/native-react-components.tgz",
         "eventemitter2": "^6.4.9",
         "lucide-react": "^1.61.0",
         "preact": "^11.0.2",
@@ -33,9 +33,9 @@
         "wouter": "^3.13.0"
     },
     "devDependencies": {
-        "@babel/core": "^8.0.9",
-        "@babel/plugin-transform-runtime": "^8.0.6",
-        "@babel/preset-typescript": "^8.0.7",
+        "@babel/core": "^7.28.0",
+        "@babel/plugin-transform-runtime": "^7.28.0",
+        "@babel/preset-typescript": "^7.27.1",
         "@emotion/babel-plugin": "^11.13.5",
         "@obsidian-lib/dev-tools": "latest",
         "@obsidian-lib/i18n-tools": "latest",
