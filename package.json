@@ -14,6 +14,8 @@
         "start": "obsidian-dev-tools start",
         "release": "obsidian-dev-tools release",
         "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json}\"",
+        "lint": "eslint .",
+        "lint:fix": "eslint . --fix",
         "tsc": "tsc --noEmit",
         "locale:nest": "i18n-tools nest",
         "locale:template": "i18n-tools template",
