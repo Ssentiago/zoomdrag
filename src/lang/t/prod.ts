@@ -1,7 +1,7 @@
 import { PartialLocale } from '@/lang/t/types/definitions';
 import { LocaleSchema } from '@/lang/types/interfaces';
 
-import { moment } from 'obsidian';
+import { moment } from '@/utils/moment';
 
 import en from '../locale/en/flat.json';
 

@@ -1,4 +1,6 @@
-import { Component, Menu, moment, requestUrl } from 'obsidian';
+import { Component, Menu, requestUrl } from 'obsidian';
+
+import { moment } from '@/utils/moment';
 
 import { ContextMenu } from '../context-menu';
 import ImageConverter from './utils/image-converter';
