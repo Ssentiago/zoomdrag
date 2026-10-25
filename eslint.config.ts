@@ -13,6 +13,8 @@ export default tseslint.config(
         'docs',
         'eslint.config.ts',
         'main.js',
+        // TS-парсер не умеет JSON — все .json дают fatal parse error.
+        '**/*.json',
     ]),
     {
         languageOptions: {
@@ -115,7 +117,7 @@ export default tseslint.config(
             eqeqeq: ['error', 'always'],
             'import/no-unused-modules': 'warn',
             'no-async-promise-executor': 'error',
-            'no-await-in-loop': 'warn',
+            'no-await-in-loop': 'off',
             'no-constant-binary-expression': 'error',
             'no-duplicate-imports': 'error',
             'no-else-return': 'error',

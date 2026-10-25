@@ -19,6 +19,7 @@ function generateMinifiedKey(index: number): string {
     let result = '';
     let i = index;
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- intentional infinite loop with break
     while (true) {
         result = KEYS_SCOPE[i % base] + result;
         i = Math.floor(i / base);
@@ -43,8 +44,9 @@ function createMinifyKeysMapping(options: { enLocalePath: string }) {
     }
 
     const enLocaleKeys = Object.keys(
-        JSON.parse(readFileSync(enLocalePathResolved, { encoding: 'utf-8' })) ||
-            {}
+        (JSON.parse(
+            readFileSync(enLocalePathResolved, { encoding: 'utf-8' })
+        ) as Record<string, unknown> | undefined) ?? {}
     ).sort();
 
     // We generate unique keys: a, b, c, ..., z, aa, ab, ac, ..., zz, aaa, ...
@@ -85,9 +87,10 @@ function getTopmostPropertyAccess(node: Node): Node {
     while (
         current?.getParent()?.getKind() === SyntaxKind.PropertyAccessExpression
     ) {
-        current = current?.getParent();
+        current = current.getParent();
     }
-    return current!;
+    if (!current) throw new Error('Unexpected null node');
+    return current;
 }
 
 function replaceTCallExpressions(source: SourceFile) {
@@ -99,7 +102,7 @@ function replaceTCallExpressions(source: SourceFile) {
             filter((node) => node === getTopmostPropertyAccess(node)),
             map((node) => ({
                 fullPath: node.getText(false).replace(/\s+/g, ''),
-                node: node,
+                node,
             })),
             filter((nodeData) => nodeData.fullPath.startsWith('t.')),
             map((nodeData) => ({
@@ -121,12 +124,12 @@ function replaceTCallExpressions(source: SourceFile) {
     }
 }
 
-function createVariableStatement(importName: string, obj: Record<string, any>) {
+function createVariableStatement(importName: string, obj: Record<string, unknown>) {
     const objectLiteral = createObjectLiteral(obj);
     return `const ${importName} = ${objectLiteral};`;
 }
 
-function createObjectLiteral(obj: Record<string, any>): string {
+function createObjectLiteral(obj: Record<string, unknown>): string {
     const properties = Object.entries(obj).map(([key, value]) => {
         const valueStr = Array.isArray(value)
             ? `[${value.map((v) => JSON.stringify(String(v))).join(', ')}]` // <- используй JSON.stringify
@@ -142,12 +145,12 @@ function createMinifiedLocale(importPath: string) {
             readFileSync(join(localesPath, importPath), {
                 encoding: 'utf-8',
             })
-        ) as Record<string, any>) || {};
+        ) as Record<string, unknown> | undefined) ?? {};
 
-    const newObject: Record<string, any> = {};
+    const newObject: Record<string, unknown> = {};
     for (const key of KEYS_MAPPING.keys()) {
         const objVal = object[key];
-        newObject[KEYS_MAPPING.get(key)!] = objVal;
+        newObject[KEYS_MAPPING.get(key) ?? key] = objVal;
     }
     return newObject;
 }
@@ -190,7 +193,7 @@ function replaceImports(source: SourceFile) {
 
     for (const nodeData of nodes) {
         const statement = createVariableStatement(
-            nodeData.importName!,
+            nodeData.importName ?? '',
             nodeData.minifiedLocale
         );
 

@@ -1,6 +1,7 @@
 import { from, toArray } from 'ix/iterable';
 import { filter, map } from 'ix/iterable/operators';
 import path from 'node:path';
+import type { Plugin } from 'rollup';
 import {
     CallExpression,
     Node,
@@ -40,9 +41,10 @@ function findFunctionName(currentNode: Node): string {
 }
 
 function extendNode(node: CallExpression) {
-    const logText = node.getArguments()[0];
+    const args = node.getArguments();
+    const logText = args[0];
 
-    if (!logText) {
+    if (args.length === 0) {
         return node;
     }
 
@@ -109,14 +111,14 @@ function extendLoggerCalls(source: SourceFile) {
     }
 }
 
-export default function addLoggerContext() {
+export default function addLoggerContext(): Plugin {
     const project = new Project({
         useInMemoryFileSystem: true,
     });
     return {
         name: 'add-logger-context',
         transform(code: string, id: string) {
-            if (!id.match(/(ts|tsx)$/)) return;
+            if (!id.match(/(ts|tsx)$/)) return null;
 
             const sourceFile = project.createSourceFile(id, code, {
                 overwrite: true,
