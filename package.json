@@ -57,9 +57,11 @@
         "dependency-cruiser": "^18.7.0",
         "eslint": "^10.13.0",
         "eslint-plugin-import": "^2.32.0",
+        "eslint-plugin-obsidianmd": "^0.4.2",
         "eslint-plugin-react": "^7.37.5",
         "eslint-plugin-react-hooks": "^7.1.1",
         "eslint-plugin-unused-imports": "^4.4.1",
+        "globals": "^17.13.0",
         "jiti": "^2.7.0",
         "nodemon": "^3.1.14",
         "obsidian-typings": "^6.50.0",
@@ -74,6 +76,7 @@
         "sass": "^1.106.1",
         "ts-morph": "^28.0.0",
         "ts-node": "^10.9.2",
-        "typescript": "6.0.3"
+        "typescript": "6.0.3",
+        "typescript-eslint": "^8.72.0"
     }
 }
