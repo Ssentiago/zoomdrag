@@ -32,11 +32,11 @@ export const MinimizedMode: FC<{
     useEffect(() => {
         if (!isDragging) return undefined;
 
-        document.addEventListener('mousemove', dragHandlers.onMouseMove);
-        document.addEventListener('mouseup', dragHandlers.onMouseUp);
+        activeDocument.addEventListener('mousemove', dragHandlers.onMouseMove);
+        activeDocument.addEventListener('mouseup', dragHandlers.onMouseUp);
         return () => {
-            document.removeEventListener('mousemove', dragHandlers.onMouseMove);
-            document.removeEventListener('mouseup', dragHandlers.onMouseUp);
+            activeDocument.removeEventListener('mousemove', dragHandlers.onMouseMove);
+            activeDocument.removeEventListener('mouseup', dragHandlers.onMouseUp);
         };
     }, [isDragging, dragHandlers.onMouseMove, dragHandlers.onMouseUp]);
 

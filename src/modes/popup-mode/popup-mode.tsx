@@ -58,8 +58,8 @@ export default class PopupMode extends Component {
         component.load();
 
         const el = createDiv();
-        el.style.visibility = 'hidden';
-        document.body.appendChild(el);
+        el.addClass('izd-offscreen');
+        activeDocument.body.appendChild(el);
 
         const file = view.file;
         if (!file) {
@@ -141,7 +141,7 @@ export default class PopupMode extends Component {
     ): Promise<void> {
         const images = Array.isArray(image) ? image : [image];
         this.plugin.logger.debug('showPopup', { count: images.length });
-        this.popupDiv ??= document.body.createDiv();
+        this.popupDiv ??= activeDocument.body.createDiv();
         if (!this.popupRoot) {
             this.popupRoot = createRoot(this.popupDiv);
             this.popupRoot.render(

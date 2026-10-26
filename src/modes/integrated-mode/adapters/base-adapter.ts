@@ -188,7 +188,7 @@ export default abstract class BaseAdapter {
         }
         let current = el as HTMLElement | null | undefined;
 
-        while (current && current !== document.body) {
+        while (current && current !== activeDocument.body) {
             if ((current as HTMLElementWithCMView).cmView) {
                 return current;
             }

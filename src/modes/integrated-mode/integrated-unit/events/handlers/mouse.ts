@@ -46,7 +46,7 @@ export class Mouse extends Component implements Handler {
         const modifierKey = event.ctrlKey || event.metaKey;
         if (
             !modifierKey &&
-            document.fullscreenElement !== this.events.unit.context.content
+            activeDocument.fullscreenElement !== this.events.unit.context.content
         ) {
             return;
         }

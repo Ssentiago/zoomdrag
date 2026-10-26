@@ -138,6 +138,14 @@
     transition: opacity 0.2s;
     white-space: nowrap;
     box-shadow: var(--shadow-s);
+
+    &.visible {
+        opacity: 1;
+    }
+}
+
+.izd-offscreen {
+    visibility: hidden;
 }
 
 .picker-mode {

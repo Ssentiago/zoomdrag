@@ -45,8 +45,8 @@ const Popup = (): React.ReactElement => {
             }
         };
 
-        document.addEventListener('keydown', handleEsc);
-        return () => document.removeEventListener('keydown', handleEsc);
+        activeDocument.addEventListener('keydown', handleEsc);
+        return () => activeDocument.removeEventListener('keydown', handleEsc);
     }, [onClose]);
 
     const handleOverlayClick = useCallback(

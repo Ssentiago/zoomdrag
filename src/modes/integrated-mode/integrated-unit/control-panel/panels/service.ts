@@ -103,7 +103,7 @@ export class ServicePanel extends BasePanel<ServiceButtons> {
                     await this.unit.actions.toggleFullscreen();
 
                     if (
-                        document.fullscreenElement ===
+                        activeDocument.fullscreenElement ===
                         this.unit.context.container
                     ) {
                         updateButton(
@@ -158,7 +158,7 @@ export class ServicePanel extends BasePanel<ServiceButtons> {
         if (!button) {
             return;
         }
-        if (document.fullscreenElement) {
+        if (activeDocument.fullscreenElement) {
             window.requestAnimationFrame(() => {
                 this.unit.actions.resetZoomAndMove();
             });

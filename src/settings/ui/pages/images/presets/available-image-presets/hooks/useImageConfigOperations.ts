@@ -53,9 +53,9 @@ export const useImageConfigOperations = (): UseImageConfigOperationsReturn => {
         const oldUnit = units[index];
 
         const editingNameInput: HTMLInputElement | null =
-            document.querySelector('#editing-name-input');
+            activeDocument.querySelector('#editing-name-input');
         const editingSelectorInput: HTMLInputElement | null =
-            document.querySelector('#editing-selector-input');
+            activeDocument.querySelector('#editing-selector-input');
         if (!editingNameInput || !editingSelectorInput) {
             return undefined;
         }
