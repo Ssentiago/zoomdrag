@@ -6,7 +6,7 @@ import IntegratedUnit from '@/modes/integrated-mode/integrated-unit/integrated-u
 import { TriggerType } from '@/modes/integrated-mode/integrated-unit/types/constants';
 import { LeafID } from '@/modes/integrated-mode/types/definitions';
 
-import { Component, debounce, MarkdownView } from 'obsidian';
+import { Component, debounce, MarkdownView, TFile } from 'obsidian';
 
 import { MdViewAdapter } from './adapters/md-view-adapter';
 import State from './state';
@@ -88,7 +88,10 @@ export default class IntegratedMode extends Component {
 
     private setupFileMenu(): void {
         this.registerEvent(
-            this.plugin.app.workspace.on('file-menu', (menu) => {
+            this.plugin.app.workspace.on('file-menu', (menu, file, source) => {
+                if (source !== 'more-options') return;
+                if (!(file instanceof TFile) || file.extension !== 'md') return;
+
                 if (
                     !(
                         this.context.inPreviewMode ||
