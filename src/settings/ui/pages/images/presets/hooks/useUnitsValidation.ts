@@ -53,7 +53,7 @@ export const useUnitsValidation = (): UseUnitsValidationReturn => {
 
     const testSelector = (selector: string) => {
         try {
-            document.querySelector(selector);
+            activeDocument.querySelector(selector);
             return { valid: true, err: undefined };
         } catch (err: unknown) {
             const parts = (err.message as string).split(':');

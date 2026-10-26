@@ -65,9 +65,9 @@ export class Export extends Component {
         const downloadLink = createEl('a');
         downloadLink.href = url;
         downloadLink.download = filename;
-        document.body.appendChild(downloadLink);
+        activeDocument.body.appendChild(downloadLink);
         downloadLink.click();
-        document.body.removeChild(downloadLink);
+        activeDocument.body.removeChild(downloadLink);
         URL.revokeObjectURL(url);
     }
 }

@@ -116,7 +116,7 @@ export default class Logger {
      * @returns The version of Obsidian as a string, or 'unknown' if it cannot be determined.
      */
     getObsidianVersion(): string {
-        const title = document.title;
+        const title = activeDocument.title;
         const match = title.match(/Obsidian v([\d.]+)/);
         return match ? match[1] : 'unknown';
     }
@@ -132,7 +132,7 @@ export default class Logger {
             session_start: true,
             obsidian: {
                 version: this.getObsidianVersion(),
-                title: document.title,
+                title: activeDocument.title,
                 enabledPlugins_count:
                     this.plugin.app.plugins.enabledPlugins.size,
                 enabledPlugins_list: Array.from(
@@ -144,7 +144,6 @@ export default class Logger {
             },
             system: {
                 platform: this.getPlatformInfo(),
-                userAgent: navigator.userAgent,
                 language: navigator.language,
                 screen_resolution: `${screen.width}x${screen.height}`,
                 viewport_size: `${window.innerWidth}x${window.innerHeight}`,
@@ -220,22 +219,15 @@ export default class Logger {
     /**
      * Get the platform information.
      *
-     * This function uses the `userAgentData` API if available, otherwise it falls back to the
-     * `navigator.platform` property. If both of them are not available, it returns 'unknown'.
+     * Uses the Obsidian `Platform` API to determine the OS.
      *
      * @returns {string} The platform name, or 'unknown' if it cannot be determined.
      */
     private getPlatformInfo(): string {
-        if ('userAgentData' in navigator) {
-            const uaData = (
-                navigator as unknown as {
-                    userAgentData?: { platform?: string };
-                }
-            ).userAgentData;
-            return uaData?.platform ?? 'unknown';
-        }
-
-        return navigator.platform;
+        if (Platform.isMacOS) return 'macOS';
+        if (Platform.isWin) return 'Windows';
+        if (Platform.isLinux) return 'Linux';
+        return 'unknown';
     }
 
     /**
@@ -250,12 +242,12 @@ export default class Logger {
      */
     getStorageUsage(): string {
         try {
-            const logs = localStorage.getItem(this.storageKey);
+            const logs = this.plugin.app.loadLocalStorage(this.storageKey);
             if (!logs) {
                 return '0 B';
             }
 
-            const bytes = logs.length + this.storageKey.length;
+            const bytes = JSON.stringify(logs).length + this.storageKey.length;
             return `${(bytes / 1024).toFixed(2)} KB`;
         } catch {
             return 'unknown';
@@ -269,8 +261,8 @@ export default class Logger {
      */
     private checkStorageAvailability(): void {
         try {
-            localStorage.setItem('test', 'test');
-            localStorage.removeItem('test');
+            this.plugin.app.saveLocalStorage('__test', 'test');
+            this.plugin.app.saveLocalStorage('__test', null);
         } catch {
             this.isStorageAvailable = false;
             console.warn('Zoomdrag: Localstorage is not available');
@@ -297,7 +289,7 @@ export default class Logger {
                 logs.splice(0, logs.length - this.maxEntries);
             }
 
-            localStorage.setItem(this.storageKey, JSON.stringify(logs));
+            this.plugin.app.saveLocalStorage(this.storageKey, logs);
 
             this.plugin.emitter.emit('logs-changed', {
                 storage: this.getStorageUsage(),
@@ -317,8 +309,8 @@ export default class Logger {
      * @returns {any[]} An array of log objects, or an empty array if no logs are available.
      */
     getAllLogs(): LogEntry[] {
-        const stored = localStorage.getItem(this.storageKey);
-        return stored ? (JSON.parse(stored) as LogEntry[]) : [];
+        const stored = this.plugin.app.loadLocalStorage(this.storageKey);
+        return (stored as LogEntry[] | null) ?? [];
     }
 
     /**
@@ -458,7 +450,7 @@ export default class Logger {
      * storage to an empty state.
      */
     clearAllLogs(): void {
-        localStorage.removeItem(this.storageKey);
+        this.plugin.app.saveLocalStorage(this.storageKey, null);
         this.plugin.emitter.emit('logs-changed', {
             storage: this.getStorageUsage(),
             entries: this.getAllLogs().length,

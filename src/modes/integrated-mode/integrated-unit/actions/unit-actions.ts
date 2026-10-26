@@ -112,12 +112,12 @@ export class UnitActions {
     async toggleFullscreen(): Promise<void> {
         const container = this.unit.context.container;
 
-        if (!document.fullscreenElement) {
+        if (!activeDocument.fullscreenElement) {
             container.addClass('is-fullscreen');
             await container.requestFullscreen({ navigationUI: 'auto' });
         } else {
             container.removeClass('is-fullscreen');
-            await document.exitFullscreen();
+            await activeDocument.exitFullscreen();
         }
 
         window.requestAnimationFrame(() => {

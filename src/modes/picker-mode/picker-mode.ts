@@ -93,7 +93,7 @@ export default class PickerMode extends Component {
     private createTooltip(): void {
         this.tooltip = createDiv();
         this.tooltip.addClass('picker-mode-tooltip');
-        document.body.appendChild(this.tooltip);
+        activeDocument.body.appendChild(this.tooltip);
     }
 
     private showTooltip(element: Element): void {
@@ -111,7 +111,7 @@ export default class PickerMode extends Component {
 
         if (!canUseIntegratedMode) {
             this.tooltip.textContent = `Alt+Click to open popup`;
-            this.tooltip.style.opacity = '1';
+            this.tooltip.addClass('visible');
             return;
         }
 
@@ -137,28 +137,28 @@ export default class PickerMode extends Component {
         }
 
         this.tooltip.textContent = text;
-        this.tooltip.style.opacity = '1';
+        this.tooltip.addClass('visible');
     }
 
     private hideTooltip(): void {
         if (this.tooltip) {
-            this.tooltip.style.opacity = '0';
+            this.tooltip.removeClass('visible');
         }
         this.currentElement = null;
     }
 
     private activate(): void {
         this.isActive = true;
-        document.body.addClass('picker-mode');
+        activeDocument.body.addClass('picker-mode');
         this.createTooltip();
 
-        document.addEventListener('mousemove', this.onMouseMove);
-        document.addEventListener('mouseover', this.onMouseOver);
-        document.addEventListener('mouseout', this.onMouseOut);
-        document.addEventListener('keydown', this.onKeyDown);
-        document.addEventListener('mousedown', this.onMouseDown, true);
+        activeDocument.addEventListener('mousemove', this.onMouseMove);
+        activeDocument.addEventListener('mouseover', this.onMouseOver);
+        activeDocument.addEventListener('mouseout', this.onMouseOut);
+        activeDocument.addEventListener('keydown', this.onKeyDown);
+        activeDocument.addEventListener('mousedown', this.onMouseDown, true);
 
-        document.querySelectorAll('svg, img').forEach((el) => {
+        activeDocument.querySelectorAll('svg, img').forEach((el) => {
             if (isThisSvgIcon(el)) {
                 return;
             }
@@ -176,15 +176,15 @@ export default class PickerMode extends Component {
         if (!this.isActive) return;
 
         this.isActive = false;
-        document.body.removeClass('picker-mode');
+        activeDocument.body.removeClass('picker-mode');
 
-        document.removeEventListener('mousemove', this.onMouseMove);
-        document.removeEventListener('mouseover', this.onMouseOver);
-        document.removeEventListener('mouseout', this.onMouseOut);
-        document.removeEventListener('mousedown', this.onMouseDown, true);
-        document.removeEventListener('keydown', this.onKeyDown);
+        activeDocument.removeEventListener('mousemove', this.onMouseMove);
+        activeDocument.removeEventListener('mouseover', this.onMouseOver);
+        activeDocument.removeEventListener('mouseout', this.onMouseOut);
+        activeDocument.removeEventListener('mousedown', this.onMouseDown, true);
+        activeDocument.removeEventListener('keydown', this.onKeyDown);
 
-        document.querySelectorAll('svg, img').forEach((el) => {
+        activeDocument.querySelectorAll('svg, img').forEach((el) => {
             el.removeClass('interactive-candidate');
         });
 

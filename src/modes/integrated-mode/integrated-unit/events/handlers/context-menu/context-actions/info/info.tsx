@@ -17,7 +17,7 @@ export default class Info extends Component {
         const info = this.info;
 
         this.modalDiv ??= createDiv();
-        document.body.appendChild(this.modalDiv);
+        activeDocument.body.appendChild(this.modalDiv);
 
         if (!this.reactRoot) {
             this.reactRoot = createRoot(this.modalDiv);

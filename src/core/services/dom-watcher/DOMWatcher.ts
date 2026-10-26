@@ -25,7 +25,7 @@ export default class DOMWatcher extends Component {
                 }
             })();
         });
-        this.observer.observe(document.body, {
+        this.observer.observe(activeDocument.body, {
             childList: true, // Add/removal of children
             subtree: true, // monitor all subtree
             attributes: true, // changes in attributes

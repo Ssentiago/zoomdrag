@@ -69,7 +69,7 @@ export default class ImageConverter {
         clone.setAttribute('width', String(rect.width));
         clone.setAttribute('height', String(rect.height));
 
-        const bgColor = getComputedStyle(document.body).backgroundColor;
+        const bgColor = getComputedStyle(activeDocument.body).backgroundColor;
 
         const svgData = new XMLSerializer().serializeToString(clone);
         const dataUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgData)}`;
