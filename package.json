@@ -5,7 +5,7 @@
     "keywords": [],
     "license": "Apache-2.0",
     "main": "src/main.ts",
-    "repository": "https://github.com/Ssentiago/image-zoom-drag.git",
+    "repository": "https://github.com/Ssentiago/zoomdrag.gitы",
     "type": "module",
     "version": "6.3.1",
     "scripts": {
