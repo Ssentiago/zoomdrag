@@ -1,6 +1,6 @@
 [project]
 name = "zoomdrag"
-repo = "Ssentiago/image-zoom-drag"
+repo = "Ssentiago/zoomdrag"
 branches = ["main", "master"]
 
 changelog_type = "conventional"
