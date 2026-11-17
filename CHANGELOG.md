@@ -1,3 +1,12 @@
+## [6.4.0] - 2026-11-17
+
+### Features
+- replace sidebar nav with drill-down sections ([`08e5b93`](https://github.com/Ssentiago/zoomdrag/commit/08e5b93c919796dd2736a8412fda9172dc457998))
+
+### Bug Fixes
+- restrict NativeTouch menu item to document more-options only ([`271f397`](https://github.com/Ssentiago/zoomdrag/commit/271f39730ac14d3bfe1a7e1ae3e5e442711df338))
+- work correctly in popout windows and follow Obsidian API ([`18ac982`](https://github.com/Ssentiago/zoomdrag/commit/18ac982632b94dab25fe7e0771fc998eb4b5ddf1))
+
 ## [6.3.1] - 2026-10-11
 Rebrand plugin from Image Zoom & Drag to Zoomdrag
 
